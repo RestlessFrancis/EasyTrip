@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Easytrip{% endblock %}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    {% block extra_head %}{% endblock %}
+</head>
+
+<body>
+
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="{% url 'home' %}" class="logo">
+                {% comment %} Could use an SVG icon for logo here. using text for now {% endcomment %}
+                <span style="font-size: 1.5rem; font-weight: 500;">Easytrip</span>
+            </a>
+
+            <ul class="nav-links">
+                <li><a href="{% url 'home' %}">Home</a></li>
+                <li><a href="{% url 'home' %}#features">Features</a></li>
+                <li><a href="{% url 'home' %}#create-trip">Destinations</a></li>
+                <li><a href="{% url 'home' %}#explore">Explore</a></li>
+            </ul>
+
+            <div class="nav-actions">
+                {% if user.is_authenticated %}
+                <span style="font-size: 0.9rem; font-weight: 500; color: #4a4a4a;">Hi, {{ user.username }}</span>
+                <a href="{% url 'dashboard' %}" class="btn btn-primary dark-green-btn btn-sm">Go to Dashboard</a>
+                <a href="{% url 'logout' %}" class="btn btn-outline btn-sm"
+                    style="border: 1px solid var(--border-color);">Log Out</a>
+                {% else %}
+                <a href="{% url 'login' %}" class="btn btn-outline btn-sm"
+                    style="border: 1px solid var(--border-color);">Log In</a>
+                <a href="{% url 'signup' %}" class="btn btn-primary dark-green-btn btn-sm">Sign Up</a>
+                {% endif %}
+            </div>
+
+            <!-- Mobile Menu Toggle (Optional for now) -->
+            <button class="mobile-toggle" aria-label="Toggle navigation">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Main Content Area -->
+    <main>
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <!-- Footer Area (Optional if needed later) -->
+    <footer>
+        <div class="footer-container">
+            <p>&copy; {% now "Y" %} Easytrip@Pepito. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Simple mobile menu toggle
+        document.querySelector('.mobile-toggle').addEventListener('click', function () {
+            document.querySelector('.nav-links').classList.toggle('active');
+            let actions = document.querySelector('.nav-actions');
+            if (actions) actions.classList.toggle('active');
+        });
+    </script>
+    {% block extra_scripts %}{% endblock %}
+</body>
+
+</html>
