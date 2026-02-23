@@ -1,0 +1,438 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="hero-content">
+        <span class="pill-tag">Free to use</span>
+        <h1>Plan your perfect trip in minutes</h1>
+        <p>Generate complete, day-by-day travel itineraries tailored to your preferences. No more hours of research.
+            Just tell us where you want to go.</p>
+        <div class="hero-actions">
+            <a href="#create-trip" class="btn btn-primary dark-green-btn">Generate My Plan</a>
+        </div>
+    </div>
+    <div class="hero-images">
+        <div class="hero-img-box img-1">
+            <img src="https://images.unsplash.com/photo-1527842891421-42eec6e703ea?auto=format&fit=crop&q=80&w=600"
+                alt="Mountain Landscape">
+        </div>
+        <div class="hero-img-box img-2">
+            <img src="https://images.unsplash.com/photo-1506929562872-bb421503ef21?auto=format&fit=crop&q=80&w=600"
+                alt="Coastal View">
+        </div>
+        <div class="hero-img-box img-3">
+            <img src="https://images.unsplash.com/photo-1447752875215-b2761acb3c5d?auto=format&fit=crop&q=80&w=600"
+                alt="Forest path">
+        </div>
+        <div class="hero-img-box img-4">
+            <img src="https://images.unsplash.com/photo-1499793983690-e29da59ef1c2?auto=format&fit=crop&q=80&w=600"
+                alt="Beach aerial">
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section id="features" style="padding: 6rem 2rem; background-color: var(--white);">
+    <div class="form-header text-center" style="margin-bottom: 4rem;">
+        <span class="pill-tag" style="margin-bottom: 1rem;">Why Easytrip?</span>
+        <h2>Everything you need for the perfect trip</h2>
+        <p>Our AI-powered platform takes the hassle out of travel planning.</p>
+    </div>
+
+    <div
+        style="max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 3rem;">
+        <div style="text-align: center; padding: 2rem; border-radius: 16px; background-color: var(--background);">
+            <div
+                style="width: 64px; height: 64px; margin: 0 auto 1.5rem; background-color: var(--primary-green); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <polyline points="12 6 12 12 16 14"></polyline>
+                </svg>
+            </div>
+            <h3 style="margin-bottom: 1rem;">Save Time</h3>
+            <p style="color: #666; line-height: 1.6;">Stop spending hours researching. Let our AI build a comprehensive,
+                day-by-day itinerary in seconds.</p>
+        </div>
+
+        <div style="text-align: center; padding: 2rem; border-radius: 16px; background-color: var(--background);">
+            <div
+                style="width: 64px; height: 64px; margin: 0 auto 1.5rem; background-color: var(--primary-green); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                </svg>
+            </div>
+            <h3 style="margin-bottom: 1rem;">Personalized Plans</h3>
+            <p style="color: #666; line-height: 1.6;">From foodies to hikers, tell us your interests and we'll tailor
+                every detail of the trip to exactly what you love.</p>
+        </div>
+
+        <div style="text-align: center; padding: 2rem; border-radius: 16px; background-color: var(--background);">
+            <div
+                style="width: 64px; height: 64px; margin: 0 auto 1.5rem; background-color: var(--primary-green); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"></polygon>
+                    <line x1="9" y1="3" x2="9" y2="21"></line>
+                    <line x1="15" y1="3" x2="15" y2="21"></line>
+                </svg>
+            </div>
+            <h3 style="margin-bottom: 1rem;">Interactive Maps</h3>
+            <p style="color: #666; line-height: 1.6;">Every itinerary comes with a built-in satellite map pinpointing
+                your destination and key highlights.</p>
+        </div>
+    </div>
+</section>
+
+<!-- Form Section -->
+<section id="create-trip" class="form-section">
+    <div class="form-header text-center">
+        <h2>Create your trip</h2>
+        <p>Tell us what you have in mind and we will build your perfect itinerary.</p>
+    </div>
+
+    <div class="trip-card-form">
+        <form action="#" method="POST">
+            {% csrf_token %}
+            <div class="form-group full-width">
+                <label for="destination">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        style="vertical-align: middle; margin-right: 4px; color: var(--primary-green)">
+                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                        <circle cx="12" cy="10" r="3"></circle>
+                    </svg>
+                    Destination
+                </label>
+                <input type="text" id="destination" name="destination" placeholder="Search your destination" required>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="trip_length">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2"
+                            style="vertical-align: middle; margin-right: 4px; color: var(--primary-green)">
+                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                            <line x1="16" y1="2" x2="16" y2="6"></line>
+                            <line x1="8" y1="2" x2="8" y2="6"></line>
+                            <line x1="3" y1="10" x2="21" y2="10"></line>
+                        </svg>
+                        Trip Length
+                    </label>
+                    <div class="number-input-wrp">
+                        <button type="button" class="number-btn" onclick="decrement('trip_length')">-</button>
+                        <input type="number" id="trip_length" name="trip_length" value="3" min="1" max="30">
+                        <div style="padding-right: 12px; font-size: 0.9rem; color: #666">days</div>
+                        <button type="button" class="number-btn" onclick="increment('trip_length')">+</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="group_size">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2"
+                            style="vertical-align: middle; margin-right: 4px; color: var(--primary-green)">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="9" cy="7" r="4"></circle>
+                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                        </svg>
+                        Group Size
+                    </label>
+                    <input type="text" id="group_size" name="group_size" placeholder="How many people?">
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="start_date">Start Date</label>
+                    <input type="date" id="start_date" name="start_date">
+                </div>
+                <div class="form-group">
+                    <label for="end_date">End Date</label>
+                    <input type="date" id="end_date" name="end_date">
+                </div>
+            </div>
+
+            <div class="form-group full-width">
+                <label>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        style="vertical-align: middle; margin-right: 4px; color: var(--primary-green)">
+                        <path
+                            d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z">
+                        </path>
+                    </svg>
+                    Interests (pick up to 5)
+                </label>
+                <div class="interests-grid">
+                    <div class="interest-tag">
+                        <input type="checkbox" id="int_food" name="interests" value="Food">
+                        <label for="int_food">Food & Dining</label>
+                    </div>
+                    <div class="interest-tag">
+                        <input type="checkbox" id="int_history" name="interests" value="History">
+                        <label for="int_history">History & Culture</label>
+                    </div>
+                    <div class="interest-tag">
+                        <input type="checkbox" id="int_nature" name="interests" value="Nature">
+                        <label for="int_nature">Nature & Hiking</label>
+                    </div>
+                    <div class="interest-tag">
+                        <input type="checkbox" id="int_beaches" name="interests" value="Beaches">
+                        <label for="int_beaches">Beaches & Water</label>
+                    </div>
+                    <div class="interest-tag">
+                        <input type="checkbox" id="int_nightlife" name="interests" value="Nightlife">
+                        <label for="int_nightlife">Nightlife</label>
+                    </div>
+                    <div class="interest-tag">
+                        <input type="checkbox" id="int_shopping" name="interests" value="Shopping">
+                        <label for="int_shopping">Shopping</label>
+                    </div>
+                    <div class="interest-tag">
+                        <input type="checkbox" id="int_photography" name="interests" value="Photography">
+                        <label for="int_photography">Photography</label>
+                    </div>
+                    <div class="interest-tag">
+                        <input type="checkbox" id="int_architecture" name="interests" value="Architecture">
+                        <label for="int_architecture">Architecture</label>
+                    </div>
+                    <div class="interest-tag">
+                        <input type="checkbox" id="int_adventure" name="interests" value="Adventure">
+                        <label for="int_adventure">Adventure Sports</label>
+                    </div>
+                    <div class="interest-tag">
+                        <input type="checkbox" id="int_art" name="interests" value="Art">
+                        <label for="int_art">Art & Museums</label>
+                    </div>
+                    <div class="interest-tag">
+                        <input type="checkbox" id="int_wellness" name="interests" value="Wellness">
+                        <label for="int_wellness">Wellness & Spa</label>
+                    </div>
+                    <div class="interest-tag">
+                        <input type="checkbox" id="int_markets" name="interests" value="Markets">
+                        <label for="int_markets">Local Markets</label>
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary dark-green-btn"
+                style="width: 100%; margin-top: 1rem; padding: 16px;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    style="vertical-align: text-bottom; margin-right: 8px;">
+                    <path
+                        d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z">
+                    </path>
+                    <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+                    <line x1="12" y1="22.08" x2="12" y2="12"></line>
+                </svg>
+                Generate My Itinerary
+            </button>
+            <p class="text-center" style="font-size: 0.85rem; color: #888; margin-top: 1rem;">Free forever. Your
+                itinerary will be ready in seconds.</p>
+        </form>
+    </div>
+</section>
+
+{% if user.is_authenticated and recent_trips %}
+<!-- My Trips Section (Mock Data) -->
+<section class="trips-section">
+    <div class="trips-header">
+        <h3>My Trips</h3>
+        <p>Your planned adventures, all in one place.</p>
+    </div>
+
+    <div class="trips-grid">
+        <!-- Trip 1 -->
+        <a href="#" class="trip-card">
+            <img src="https://images.unsplash.com/photo-1559511260-66a654ae982a?auto=format&fit=crop&q=80&w=800"
+                alt="Vancouver">
+            <div class="trip-card-overlay">
+                <h4>Vancouver, British Columbia, Canada</h4>
+                <p>Vancouver is a vibrant coastal city nestled between mountains and the Pacific Ocean, renowned for
+                    its...</p>
+                <div class="trip-meta">
+                    <span>
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" style="vertical-align: middle; margin-right: 4px;">
+                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                            <line x1="16" y1="2" x2="16" y2="6"></line>
+                            <line x1="8" y1="2" x2="8" y2="6"></line>
+                            <line x1="3" y1="10" x2="21" y2="10"></line>
+                        </svg>
+                        Feb 16 - Feb 23, 2026
+                    </span>
+                    <span>
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" style="vertical-align: middle; margin-right: 4px;">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="9" cy="7" r="4"></circle>
+                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                        </svg>
+                        5-8 Travelers
+                    </span>
+                </div>
+            </div>
+        </a>
+
+
+
+        <!-- Trip 3 -->
+        <a href="#" class="trip-card">
+            <img src="https://images.unsplash.com/photo-1530122037265-a5f1f91d3b99?auto=format&fit=crop&q=80&w=800"
+                alt="Switzerland">
+            <div class="trip-card-overlay">
+                <h4>Switzerland</h4>
+                <p>Switzerland, a landlocked country in Central Europe, is renowned for its breathtaking Alpine
+                    landscapes...</p>
+                <div class="trip-meta">
+                    <span>
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" style="vertical-align: middle; margin-right: 4px;">
+                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                            <line x1="16" y1="2" x2="16" y2="6"></line>
+                            <line x1="8" y1="2" x2="8" y2="6"></line>
+                            <line x1="3" y1="10" x2="21" y2="10"></line>
+                        </svg>
+                        Feb 16 - Feb 27, 2026
+                    </span>
+                    <span>
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" style="vertical-align: middle; margin-right: 4px;">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
+                        2 Travelers
+                    </span>
+                </div>
+            </div>
+        </a>
+
+        <!-- Trip 4 -->
+        <a href="#" class="trip-card">
+            <img src="https://images.unsplash.com/photo-1499856871958-5b9627545d1a?auto=format&fit=crop&q=80&w=800"
+                alt="Paris">
+            <div class="trip-card-overlay">
+                <h4>Paris, France</h4>
+                <p>Paris, the City of Light, captivates visitors with its unparalleled blend of iconic architecture,
+                    world-clas...</p>
+                <div class="trip-meta">
+                    <span>
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" style="vertical-align: middle; margin-right: 4px;">
+                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                            <line x1="16" y1="2" x2="16" y2="6"></line>
+                            <line x1="8" y1="2" x2="8" y2="6"></line>
+                            <line x1="3" y1="10" x2="21" y2="10"></line>
+                        </svg>
+                        Feb 17 - Feb 20, 2026
+                    </span>
+                    <span>
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" style="vertical-align: middle; margin-right: 4px;">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
+                        2 Travelers
+                    </span>
+                </div>
+            </div>
+        </a>
+    </div>
+</section>
+{% endif %}
+
+<!-- Explore Section -->
+<section id="explore"
+    style="padding: 6rem 2rem; background-color: var(--white); border-top: 1px solid var(--border-color);">
+    <div class="form-header text-center" style="margin-bottom: 4rem;">
+        <span class="pill-tag" style="margin-bottom: 1rem;">Discover</span>
+        <h2>Explore Popular Destinations</h2>
+        <p>Need some inspiration? Check out where other travelers are going.</p>
+    </div>
+
+    <div
+        style="max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem;">
+        <div style="position: relative; height: 300px; border-radius: 16px; overflow: hidden; cursor: pointer;"
+            onclick="document.getElementById('destination').value='Tokyo'; document.getElementById('destination').scrollIntoView({behavior: 'smooth'});">
+            <img src="https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?auto=format&fit=crop&q=80&w=400"
+                alt="Tokyo" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s ease;"
+                onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+            <div
+                style="position: absolute; bottom: 0; left: 0; right: 0; padding: 2rem 1.5rem; background: linear-gradient(to top, rgba(0,0,0,0.8), transparent); color: white;">
+                <h3 style="margin: 0; font-size: 1.5rem;">Tokyo, Japan</h3>
+            </div>
+        </div>
+
+        <div style="position: relative; height: 300px; border-radius: 16px; overflow: hidden; cursor: pointer;"
+            onclick="document.getElementById('destination').value='Rome'; document.getElementById('destination').scrollIntoView({behavior: 'smooth'});">
+            <img src="https://images.unsplash.com/photo-1552832230-c0197dd311b5?auto=format&fit=crop&q=80&w=400"
+                alt="Rome" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s ease;"
+                onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+            <div
+                style="position: absolute; bottom: 0; left: 0; right: 0; padding: 2rem 1.5rem; background: linear-gradient(to top, rgba(0,0,0,0.8), transparent); color: white;">
+                <h3 style="margin: 0; font-size: 1.5rem;">Rome, Italy</h3>
+            </div>
+        </div>
+
+        <div style="position: relative; height: 300px; border-radius: 16px; overflow: hidden; cursor: pointer;"
+            onclick="document.getElementById('destination').value='Bali'; document.getElementById('destination').scrollIntoView({behavior: 'smooth'});">
+            <img src="https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&q=80&w=400"
+                alt="Bali" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s ease;"
+                onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+            <div
+                style="position: absolute; bottom: 0; left: 0; right: 0; padding: 2rem 1.5rem; background: linear-gradient(to top, rgba(0,0,0,0.8), transparent); color: white;">
+                <h3 style="margin: 0; font-size: 1.5rem;">Bali, Indonesia</h3>
+            </div>
+        </div>
+
+        <div style="position: relative; height: 300px; border-radius: 16px; overflow: hidden; cursor: pointer;"
+            onclick="document.getElementById('destination').value='New York'; document.getElementById('destination').scrollIntoView({behavior: 'smooth'});">
+            <img src="https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?auto=format&fit=crop&q=80&w=400"
+                alt="New York" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s ease;"
+                onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+            <div
+                style="position: absolute; bottom: 0; left: 0; right: 0; padding: 2rem 1.5rem; background: linear-gradient(to top, rgba(0,0,0,0.8), transparent); color: white;">
+                <h3 style="margin: 0; font-size: 1.5rem;">New York, USA</h3>
+            </div>
+        </div>
+    </div>
+
+    <div class="text-center" style="margin-top: 3rem;">
+        <button class="btn btn-outline"
+            style="border: 1px solid var(--border-color); padding: 10px 24px; border-radius: 20px; background: transparent; cursor: pointer; font-family: inherit; font-size: 1rem; color: var(--text-color);">Load
+            more destinations</button>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    function increment(id) {
+        const input = document.getElementById(id);
+        if (input.value < input.max) {
+            input.value = parseInt(input.value) + 1;
+        }
+    }
+
+    function decrement(id) {
+        const input = document.getElementById(id);
+        if (input.value > input.min) {
+            input.value = parseInt(input.value) - 1;
+        }
+    }
+
+    // Optional: Max 5 checkboxes logic
+    const checkboxes = document.querySelectorAll('.interest-tag input[type="checkbox"]');
+    let limit = 5;
+
+    checkboxes.forEach(box => {
+        box.addEventListener('change', function () {
+            let checkedCount = document.querySelectorAll('.interest-tag input[type="checkbox"]:checked').length;
+            if (checkedCount > limit) {
+                this.checked = false;
+            }
+        });
+    });
+</script>
+{% endblock %}
