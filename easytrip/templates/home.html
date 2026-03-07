@@ -215,6 +215,21 @@
                 </div>
             </div>
 
+            <!-- Spots Discovery Panel -->
+            <div id="spots-panel" style="display:none; margin-top: 1.5rem;">
+                <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:0.75rem;">
+                    <h4 id="spots-panel-title" style="margin:0; font-size:1rem; color:var(--primary-green);"></h4>
+                    <button type="button" onclick="closeSpotsPanel()" style="background:none;border:none;cursor:pointer;font-size:1.2rem;color:#888;">✕</button>
+                </div>
+                <div id="spots-loading" style="display:none; text-align:center; padding:1.5rem 0;">
+                    <div style="display:inline-block; width:28px; height:28px; border:3px solid var(--border-color); border-top-color:var(--primary-green); border-radius:50%; animation:spin 0.8s linear infinite;"></div>
+                    <p style="margin-top:0.5rem; color:#888; font-size:0.85rem;">Fetching spots...</p>
+                </div>
+                <div id="spots-grid" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(180px, 1fr)); gap:0.75rem;"></div>
+                <p id="spots-empty" style="display:none; color:#888; font-size:0.9rem; text-align:center; padding:1rem 0;">No spots found for this category in the destination.</p>
+                <p id="spots-error" style="display:none; color:#e05555; font-size:0.85rem; text-align:center; padding:0.75rem 0;"></p>
+            </div>
+
             <button type="submit" class="btn btn-primary dark-green-btn"
                 style="width: 100%; margin-top: 1rem; padding: 16px;">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
@@ -407,30 +422,201 @@
 {% endblock %}
 
 {% block extra_scripts %}
+<style>
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+.spot-card {
+    background: var(--background, #f8f8f8);
+    border: 1px solid var(--border-color, #e5e5e5);
+    border-radius: 12px;
+    padding: 0.85rem 1rem;
+    transition: box-shadow 0.2s, transform 0.2s;
+    cursor: default;
+}
+.spot-card:hover {
+    box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+    transform: translateY(-2px);
+}
+.spot-card-name {
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--text-color, #222);
+    margin: 0 0 0.35rem 0;
+    line-height: 1.3;
+}
+.spot-card-type {
+    display: inline-block;
+    font-size: 0.72rem;
+    background: rgba(80,140,100,0.12);
+    color: var(--primary-green, #4a7c59);
+    border-radius: 20px;
+    padding: 2px 9px;
+    font-weight: 500;
+}
+.spot-card-map {
+    display: block;
+    margin-top: 0.5rem;
+    font-size: 0.75rem;
+    color: #888;
+    text-decoration: none;
+}
+.spot-card-map:hover { color: var(--primary-green); }
+.destination-hint {
+    display:none;
+    color: #e05555;
+    font-size: 0.78rem;
+    margin-top: 0.4rem;
+    padding: 0 0.25rem;
+}
+</style>
 <script>
     function increment(id) {
         const input = document.getElementById(id);
-        if (input.value < input.max) {
-            input.value = parseInt(input.value) + 1;
-        }
+        if (input.value < input.max) input.value = parseInt(input.value) + 1;
     }
-
     function decrement(id) {
         const input = document.getElementById(id);
-        if (input.value > input.min) {
-            input.value = parseInt(input.value) - 1;
+        if (input.value > input.min) input.value = parseInt(input.value) - 1;
+    }
+
+    // ---- Spots panel state ----
+    const spotsCache = {};  // cache: "Destination|Category" => spots[]
+    let pendingRequests = {};
+
+    function closeSpotsPanel() {
+        document.getElementById('spots-panel').style.display = 'none';
+    }
+
+    function showSpotsPanel() {
+        document.getElementById('spots-panel').style.display = 'block';
+    }
+
+    function renderSpotsGrid() {
+        const checkedBoxes = [...document.querySelectorAll('.interest-tag input[type="checkbox"]:checked')];
+        const destination = document.getElementById('destination').value.trim();
+        const grid = document.getElementById('spots-grid');
+        const panel = document.getElementById('spots-panel');
+        const panelTitle = document.getElementById('spots-panel-title');
+        const emptyMsg = document.getElementById('spots-empty');
+        const errorMsg = document.getElementById('spots-error');
+
+        // Collect all spots from checked + cached categories
+        let allSpots = [];
+        let categoryNames = [];
+
+        for (const box of checkedBoxes) {
+            const cat = box.value;
+            const key = destination + '|' + cat;
+            if (spotsCache[key]) {
+                allSpots = allSpots.concat(spotsCache[key].map(s => ({...s, _cat: cat})));
+                categoryNames.push(cat);
+            }
+        }
+
+        grid.innerHTML = '';
+        emptyMsg.style.display = 'none';
+        errorMsg.style.display = 'none';
+
+        if (allSpots.length === 0 && categoryNames.length === 0) {
+            panel.style.display = 'none';
+            return;
+        }
+
+        showSpotsPanel();
+        panelTitle.textContent = destination
+            ? `Spots in ${destination} · ${categoryNames.join(', ')}`
+            : 'Spots found';
+
+        if (allSpots.length === 0) {
+            emptyMsg.style.display = 'block';
+            return;
+        }
+
+        allSpots.forEach(spot => {
+            const card = document.createElement('div');
+            card.className = 'spot-card';
+            const mapLink = (spot.lat && spot.lon)
+                ? `<a class="spot-card-map" href="https://www.openstreetmap.org/?mlat=${spot.lat}&mlon=${spot.lon}#map=16/${spot.lat}/${spot.lon}" target="_blank">📍 View on map</a>`
+                : '';
+            card.innerHTML = `
+                <p class="spot-card-name">${spot.name}</p>
+                <span class="spot-card-type">${spot.type}</span>
+                ${mapLink}
+            `;
+            grid.appendChild(card);
+        });
+    }
+
+    async function fetchSpotsForCategory(category, destination) {
+        const key = destination + '|' + category;
+        if (spotsCache[key] !== undefined || pendingRequests[key]) return;
+
+        pendingRequests[key] = true;
+        const loading = document.getElementById('spots-loading');
+        const errorMsg = document.getElementById('spots-error');
+        loading.style.display = 'block';
+        showSpotsPanel();
+
+        try {
+            const url = `/api/spots/?destination=${encodeURIComponent(destination)}&category=${encodeURIComponent(category)}`;
+            const resp = await fetch(url);
+            const data = await resp.json();
+            if (data.error) {
+                errorMsg.textContent = 'Error: ' + data.error;
+                errorMsg.style.display = 'block';
+                spotsCache[key] = [];
+            } else {
+                spotsCache[key] = data.spots || [];
+            }
+        } catch (e) {
+            document.getElementById('spots-error').textContent = 'Could not load spots. Check your connection.';
+            document.getElementById('spots-error').style.display = 'block';
+            spotsCache[key] = [];
+        } finally {
+            delete pendingRequests[key];
+            loading.style.display = 'none';
+            renderSpotsGrid();
         }
     }
 
-    // Optional: Max 5 checkboxes logic
+    // ---- Interest checkbox logic ----
     const checkboxes = document.querySelectorAll('.interest-tag input[type="checkbox"]');
-    let limit = 5;
+    const limit = 5;
 
     checkboxes.forEach(box => {
         box.addEventListener('change', function () {
-            let checkedCount = document.querySelectorAll('.interest-tag input[type="checkbox"]:checked').length;
+            const checkedCount = document.querySelectorAll('.interest-tag input[type="checkbox"]:checked').length;
             if (checkedCount > limit) {
                 this.checked = false;
+                return;
+            }
+
+            const destination = document.getElementById('destination').value.trim();
+            const category = this.value;
+
+            if (this.checked) {
+                if (!destination) {
+                    // Show hint to enter destination
+                    let hint = document.getElementById('dest-hint');
+                    if (!hint) {
+                        hint = document.createElement('p');
+                        hint.id = 'dest-hint';
+                        hint.className = 'destination-hint';
+                        hint.textContent = '⚠️ Please enter a destination first to see spots.';
+                        document.getElementById('destination').parentNode.appendChild(hint);
+                    }
+                    hint.style.display = 'block';
+                    setTimeout(() => hint.style.display = 'none', 3000);
+                    this.checked = false;
+                    return;
+                }
+                fetchSpotsForCategory(category, destination);
+            } else {
+                // Remove cached spots for unchecked category so they disappear
+                const key = destination + '|' + category;
+                delete spotsCache[key];
+                renderSpotsGrid();
             }
         });
     });
