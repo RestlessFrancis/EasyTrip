@@ -2,8 +2,6 @@ from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import User
 
-class Trip(models.fields.Field):
-    pass
 
 class Trip(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
@@ -13,6 +11,11 @@ class Trip(models.Model):
     start_date = models.DateField(null=True, blank=True)
     end_date = models.DateField(null=True, blank=True)
     interests = models.JSONField(default=list, blank=True)
+
+    # Budget plan
+    budget_total = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
+    budget_currency = models.CharField(max_length=10, default='USD', blank=True)
+    budget_breakdown = models.JSONField(default=dict, blank=True)  # e.g. {"accommodation": 100, "food": 150, ...}
     
     # Generated content
     title = models.CharField(max_length=200, blank=True)

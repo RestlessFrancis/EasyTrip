@@ -163,6 +163,14 @@
         font-weight: 500;
     }
 
+    .rec-spot-rating {
+        display: inline-block;
+        margin-left: 0.4rem;
+        font-size: 0.78rem;
+        color: #b8860b;
+        font-weight: 600;
+    }
+
     .rec-spot-map {
         display: block;
         margin-top: 0.45rem;
@@ -268,6 +276,7 @@
                         <div class="rec-spot-card">
                             <p class="rec-spot-name">{{ spot.name }}</p>
                             <span class="rec-spot-type">{{ spot.type }}</span>
+                            {% if spot.rating %}<span class="rec-spot-rating">{{ spot.rating }} ★</span>{% endif %}
                             {% if spot.lat and spot.lon %}
                             <a class="rec-spot-map"
                                 href="https://www.openstreetmap.org/?mlat={{ spot.lat }}&mlon={{ spot.lon }}#map=17/{{ spot.lat }}/{{ spot.lon }}"
@@ -285,7 +294,25 @@
         </div>
 
         <div class="sidebar">
-            <!-- Small map sidebar (could mirror the large one) -->
+            {% if trip.budget_total %}
+            <div
+                style="background: var(--white); padding: 1.5rem; border-radius: 12px; margin-bottom: 1rem; border: 1px solid var(--border-color);">
+                <h4 style="margin-bottom: 0.75rem;">💰 Budget Plan</h4>
+                <p style="font-size: 1.25rem; font-weight: 600; color: var(--primary-green); margin-bottom: 0.5rem;">{{ trip.budget_currency }} {{ trip.budget_total|floatformat:0 }}</p>
+                {% if trip.budget_breakdown %}
+                <ul style="font-size: 0.85rem; color: #666; list-style: none; padding: 0;">
+                    {% for key, val in trip.budget_breakdown.items %}
+                    <li style="padding: 0.25rem 0;">{{ key|title }}: {{ trip.budget_currency }} {{ val|floatformat:0 }}</li>
+                    {% endfor %}
+                </ul>
+                {% if budget_exceeded %}
+                <p style="font-size: 0.85rem; color: #c0392b; background: #fde8e8; padding: 0.5rem 0.75rem; border-radius: 8px; margin-top: 0.75rem;">
+                    ⚠️ Your breakdown ({{ trip.budget_currency }} {{ breakdown_total|floatformat:0 }}) exceeds your budget ({{ trip.budget_currency }} {{ trip.budget_total|floatformat:0 }}).
+                </p>
+                {% endif %}
+                {% endif %}
+            </div>
+            {% endif %}
             <div id="map-small" style="height: 300px; border-radius: 12px; margin-bottom: 1rem;"></div>
             <div
                 style="background: var(--white); padding: 1.5rem; border-radius: 12px; border: 1px solid var(--border-color);">

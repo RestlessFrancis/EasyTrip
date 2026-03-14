@@ -7,8 +7,16 @@ from django.http import JsonResponse
 from .models import Trip, ItineraryDay
 import datetime
 import random
+from decimal import Decimal, InvalidOperation
 import requests
 import urllib.parse
+
+
+def _spot_rating(name):
+    """Generate a deterministic rating (3.5–5.0) from spot name for display. OSM has no ratings."""
+    h = sum(ord(c) for c in (name or '')) % 100
+    return round(3.5 + (h / 100) * 1.5, 1)
+
 
 # Maps interest category names to Overpass API query filters
 CATEGORY_OVERPASS_FILTERS = {
@@ -150,6 +158,7 @@ out body 30;
         spots.append({
             'name': name,
             'type': spot_type,
+            'rating': _spot_rating(name),
             'lat': el.get('lat'),
             'lon': el.get('lon'),
         })
@@ -167,6 +176,8 @@ def home(request):
         start_date = request.POST.get('start_date')
         end_date = request.POST.get('end_date')
         interests = request.POST.getlist('interests')
+        budget_total = request.POST.get('budget_total', '').strip()
+        budget_currency = request.POST.get('budget_currency', 'USD').strip()
 
         # Convert dates if present
         def parse_date(date_str):
@@ -227,6 +238,22 @@ def home(request):
             print(f"Error geocoding {search_query}: {e}")
 
 
+        # Parse budget
+        bt = None
+        if budget_total:
+            try:
+                bt = Decimal(budget_total)
+            except (ValueError, TypeError, InvalidOperation):
+                pass
+        budget_breakdown = {}
+        for key in ('accommodation', 'food', 'activities', 'transport'):
+            val = request.POST.get(f'budget_{key}', '').strip()
+            if val:
+                try:
+                    budget_breakdown[key] = float(val)
+                except (ValueError, TypeError):
+                    pass
+
         trip = Trip.objects.create(
             user=request.user if request.user.is_authenticated else None,
             destination=search_query,
@@ -235,6 +262,9 @@ def home(request):
             start_date=s_date,
             end_date=e_date,
             interests=interests,
+            budget_total=bt,
+            budget_currency=budget_currency or 'USD',
+            budget_breakdown=budget_breakdown,
             title=f"{trip_length} days in {destination}",
             overview=overview_text,
             image_url=image_url,
@@ -313,6 +343,7 @@ def trip_detail(request, trip_id):
                             ).replace('_', ' ').title()
                             cat_spots.append({
                                 'name': name, 'type': spot_type,
+                                'rating': _spot_rating(name),
                                 'lat': el.get('lat'), 'lon': el.get('lon'),
                                 'category': category,
                             })
@@ -325,10 +356,22 @@ def trip_detail(request, trip_id):
         except Exception:
             pass
 
+    # Check if budget breakdown exceeds total
+    breakdown_total = 0
+    budget_exceeded = False
+    if trip.budget_total and trip.budget_breakdown:
+        breakdown_total = sum(
+            float(v) for k, v in trip.budget_breakdown.items()
+            if isinstance(v, (int, float))
+        )
+        budget_exceeded = breakdown_total > float(trip.budget_total)
+
     context = {
         'trip': trip,
         'days': days,
         'recommended_spots': recommended_spots,
+        'budget_exceeded': budget_exceeded,
+        'breakdown_total': breakdown_total,
     }
     return render(request, 'detail.html', context)
 

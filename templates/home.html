@@ -215,6 +215,56 @@
                 </div>
             </div>
 
+            <div class="form-group full-width" style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border-color);">
+                <label>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        style="vertical-align: middle; margin-right: 4px; color: var(--primary-green)">
+                        <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
+                        <line x1="1" y1="10" x2="23" y2="10"></line>
+                    </svg>
+                    Budget Plan <span style="font-weight: 400; color: #888;">(optional)</span>
+                </label>
+                <div class="form-row" style="margin-top: 0.5rem;">
+                    <div class="form-group" style="flex: 1;">
+                        <label for="budget_total" style="font-size: 0.85rem; color: #666;">Total budget</label>
+                        <input type="number" id="budget_total" name="budget_total" placeholder="e.g. 500"
+                            min="0" step="0.01" style="width: 100%;">
+                    </div>
+                    <div class="form-group" style="flex: 0 0 110px;">
+                        <label for="budget_currency" style="font-size: 0.85rem; color: #666;">Currency</label>
+                        <select id="budget_currency" name="budget_currency" style="width: 100%; padding: 0.65rem 0.75rem; border: 1px solid var(--border-color); border-radius: 8px; background: white; font-family: inherit;">
+                            <option value="USD">USD</option>
+                            <option value="EUR">EUR</option>
+                            <option value="GBP">GBP</option>
+                            <option value="PHP">PHP</option>
+                            <option value="JPY">JPY</option>
+                        </select>
+                    </div>
+                </div>
+                <p style="font-size: 0.8rem; color: #888; margin-top: 0.75rem; margin-bottom: 0.5rem;">Breakdown (optional)</p>
+                <div class="form-row budget-breakdown">
+                    <div class="form-group" style="flex: 1;">
+                        <input type="number" id="budget_accommodation" name="budget_accommodation" placeholder="Accommodation"
+                            min="0" step="0.01" style="width: 100%;">
+                    </div>
+                    <div class="form-group" style="flex: 1;">
+                        <input type="number" id="budget_food" name="budget_food" placeholder="Food & Dining"
+                            min="0" step="0.01" style="width: 100%;">
+                    </div>
+                    <div class="form-group" style="flex: 1;">
+                        <input type="number" id="budget_activities" name="budget_activities" placeholder="Activities"
+                            min="0" step="0.01" style="width: 100%;">
+                    </div>
+                    <div class="form-group" style="flex: 1;">
+                        <input type="number" id="budget_transport" name="budget_transport" placeholder="Transport"
+                            min="0" step="0.01" style="width: 100%;">
+                    </div>
+                </div>
+                <p id="budget-warning" style="display:none; font-size: 0.85rem; color: #c0392b; background: #fde8e8; padding: 0.5rem 0.75rem; border-radius: 8px; margin-top: 0.75rem;">
+                    ⚠️ Your breakdown total exceeds your budget. Please adjust your amounts.
+                </p>
+            </div>
+
             <!-- Spots Discovery Panel -->
             <div id="spots-panel"
                 style="display:none; margin-top: 1.5rem; border-top: 1px solid var(--border-color); padding-top: 1.25rem;">
@@ -470,6 +520,14 @@
         font-weight: 500;
     }
 
+    .spot-rating {
+        display: inline-block;
+        margin-left: 0.4rem;
+        font-size: 0.78rem;
+        color: #b8860b;
+        font-weight: 600;
+    }
+
     .spot-card-map {
         display: block;
         margin-top: 0.4rem;
@@ -491,6 +549,30 @@
         const input = document.getElementById(id);
         if (input.value > input.min) input.value = parseInt(input.value) - 1;
     }
+
+    // ---- Budget validation ----
+    function checkBudgetExceeded() {
+        const total = parseFloat(document.getElementById('budget_total').value) || 0;
+        const breakdown = ['budget_accommodation', 'budget_food', 'budget_activities', 'budget_transport'];
+        const sum = breakdown.reduce((s, id) => s + (parseFloat(document.getElementById(id).value) || 0), 0);
+        const warn = document.getElementById('budget-warning');
+        if (total > 0 && sum > 0 && sum > total) {
+            warn.style.display = 'block';
+            return true;
+        }
+        warn.style.display = 'none';
+        return false;
+    }
+    ['budget_total', 'budget_accommodation', 'budget_food', 'budget_activities', 'budget_transport'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.addEventListener('input', checkBudgetExceeded);
+    });
+    const tripForm = document.getElementById('budget_total')?.closest('form');
+    if (tripForm) tripForm.addEventListener('submit', function(e) {
+        if (checkBudgetExceeded()) {
+            if (!confirm('Your breakdown total exceeds your budget. Continue anyway?')) e.preventDefault();
+        }
+    });
 
     // ---- Spots panel ----
     const spotsCache = {};
@@ -546,7 +628,10 @@
             const mapLink = (spot.lat && spot.lon)
                 ? `<a class="spot-card-map" href="https://www.openstreetmap.org/?mlat=${spot.lat}&mlon=${spot.lon}#map=17/${spot.lat}/${spot.lon}" target="_blank">🗺️ View on map</a>`
                 : '';
-            card.innerHTML = `<p class="spot-card-name">${spot.name}</p><span class="spot-card-type">${spot.type}</span>${mapLink}`;
+            const ratingHtml = spot.rating != null
+                ? `<span class="spot-rating">${spot.rating} ★</span>`
+                : '';
+            card.innerHTML = `<p class="spot-card-name">${spot.name}</p><span class="spot-card-type">${spot.type}</span>${ratingHtml}${mapLink}`;
             grid.appendChild(card);
         });
     }
