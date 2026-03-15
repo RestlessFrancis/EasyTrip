@@ -42,7 +42,7 @@
 </section>
 
 <!-- ===== FEATURES ===== -->
-<section id="features" class="features-section">
+<section id="features" class="features-section fade-in-section">
     <div class="section-inner">
         <div class="section-header">
             <span class="pill-tag">Why Easytrip?</span>
@@ -83,7 +83,7 @@
 </section>
 
 <!-- ===== TRIP FORM ===== -->
-<section id="create-trip" class="form-section">
+<section id="create-trip" class="form-section fade-in-section">
     <div class="section-inner">
         <div class="section-header">
             <span class="pill-tag">Get Started</span>
@@ -147,12 +147,6 @@
                         Interests <span class="label-hint">(pick up to 5)</span>
                     </label>
                     <div class="interests-grid">
-                        {% for val, label, emoji in interest_choices %}
-                        <div class="interest-tag">
-                            <input type="checkbox" id="int_{{ val|lower }}" name="interests" value="{{ val }}">
-                            <label for="int_{{ val|lower }}">{{ emoji }} {{ label }}</label>
-                        </div>
-                        {% empty %}
                         <div class="interest-tag"><input type="checkbox" id="int_food" name="interests" value="Food"><label for="int_food">🍽️ Food & Dining</label></div>
                         <div class="interest-tag"><input type="checkbox" id="int_history" name="interests" value="History"><label for="int_history">🏛️ History & Culture</label></div>
                         <div class="interest-tag"><input type="checkbox" id="int_nature" name="interests" value="Nature"><label for="int_nature">🌿 Nature & Hiking</label></div>
@@ -165,7 +159,6 @@
                         <div class="interest-tag"><input type="checkbox" id="int_art" name="interests" value="Art"><label for="int_art">🎨 Art & Museums</label></div>
                         <div class="interest-tag"><input type="checkbox" id="int_wellness" name="interests" value="Wellness"><label for="int_wellness">🧘 Wellness & Spa</label></div>
                         <div class="interest-tag"><input type="checkbox" id="int_markets" name="interests" value="Markets"><label for="int_markets">🛒 Local Markets</label></div>
-                        {% endfor %}
                     </div>
                     <p id="interest-counter" class="label-hint" style="margin-top:0.5rem;">0 / 5 selected</p>
                 </div>
@@ -246,7 +239,7 @@
 
 <!-- ===== MY TRIPS ===== -->
 {% if user.is_authenticated and recent_trips %}
-<section class="trips-section">
+<section class="trips-section fade-in-section">
     <div class="section-inner">
         <div class="trips-section-header">
             <div>
@@ -276,7 +269,7 @@
 {% endif %}
 
 <!-- ===== EXPLORE ===== -->
-<section id="explore" class="explore-section">
+<section id="explore" class="explore-section fade-in-section">
     <div class="section-inner">
         <div class="section-header">
             <span class="pill-tag">Discover</span>
@@ -286,45 +279,27 @@
         <div class="explore-grid">
             <div class="explore-card explore-card-large" onclick="setDestination('Tokyo, Japan')">
                 <img src="https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?auto=format&fit=crop&q=80&w=800" alt="Tokyo">
-                <div class="explore-card-overlay">
-                    <h3>Tokyo, Japan</h3>
-                    <p>Culture, cuisine & neon lights</p>
-                </div>
+                <div class="explore-card-overlay"><h3>Tokyo, Japan</h3><p>Culture, cuisine & neon lights</p></div>
             </div>
             <div class="explore-card" onclick="setDestination('Rome, Italy')">
                 <img src="https://images.unsplash.com/photo-1552832230-c0197dd311b5?auto=format&fit=crop&q=80&w=600" alt="Rome">
-                <div class="explore-card-overlay">
-                    <h3>Rome, Italy</h3>
-                    <p>History & architecture</p>
-                </div>
+                <div class="explore-card-overlay"><h3>Rome, Italy</h3><p>History & architecture</p></div>
             </div>
             <div class="explore-card" onclick="setDestination('Bali, Indonesia')">
                 <img src="https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&q=80&w=600" alt="Bali">
-                <div class="explore-card-overlay">
-                    <h3>Bali, Indonesia</h3>
-                    <p>Temples & tropical beaches</p>
-                </div>
+                <div class="explore-card-overlay"><h3>Bali, Indonesia</h3><p>Temples & tropical beaches</p></div>
             </div>
             <div class="explore-card" onclick="setDestination('New York, USA')">
                 <img src="https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?auto=format&fit=crop&q=80&w=600" alt="New York">
-                <div class="explore-card-overlay">
-                    <h3>New York, USA</h3>
-                    <p>The city that never sleeps</p>
-                </div>
+                <div class="explore-card-overlay"><h3>New York, USA</h3><p>The city that never sleeps</p></div>
             </div>
             <div class="explore-card" onclick="setDestination('Paris, France')">
                 <img src="https://images.unsplash.com/photo-1499856871958-5b9627545d1a?auto=format&fit=crop&q=80&w=600" alt="Paris">
-                <div class="explore-card-overlay">
-                    <h3>Paris, France</h3>
-                    <p>Romance & fine dining</p>
-                </div>
+                <div class="explore-card-overlay"><h3>Paris, France</h3><p>Romance & fine dining</p></div>
             </div>
             <div class="explore-card" onclick="setDestination('Cebu, Philippines')">
                 <img src="https://images.unsplash.com/photo-1518509562904-e7ef99cdcc86?auto=format&fit=crop&q=80&w=600" alt="Cebu">
-                <div class="explore-card-overlay">
-                    <h3>Cebu, Philippines</h3>
-                    <p>Islands & diving paradise</p>
-                </div>
+                <div class="explore-card-overlay"><h3>Cebu, Philippines</h3><p>Islands & diving paradise</p></div>
             </div>
         </div>
     </div>
@@ -353,18 +328,46 @@
     .spot-card-map:hover { color: var(--primary); }
 </style>
 <script>
-    // Increment/decrement
+    // ---- Scroll Progress Bar ----
+    const progressBar = document.getElementById('scroll-progress');
+    window.addEventListener('scroll', () => {
+        const scrollTop = window.scrollY;
+        const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+        const pct = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+        if (progressBar) progressBar.style.width = pct + '%';
+    }, { passive: true });
+
+    // ---- Parallax Hero ----
+    const heroBgImg = document.querySelector('.hero-bg img');
+    window.addEventListener('scroll', () => {
+        if (!heroBgImg) return;
+        heroBgImg.style.transform = `translateY(${window.scrollY * 0.35}px)`;
+    }, { passive: true });
+
+    // ---- Fade-in on Scroll ----
+    const fadeEls = document.querySelectorAll('.fade-in-section');
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+                observer.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.12 });
+    fadeEls.forEach(el => observer.observe(el));
+
+    // ---- Increment/Decrement ----
     function increment(id) { const i = document.getElementById(id); if (i.value < i.max) i.value = parseInt(i.value) + 1; }
     function decrement(id) { const i = document.getElementById(id); if (i.value > i.min) i.value = parseInt(i.value) - 1; }
 
-    // Destination autocomplete (popular suggestions)
+    // ---- Destination Autocomplete ----
     const suggestions = ['Tokyo, Japan','Paris, France','Bali, Indonesia','Rome, Italy','New York, USA','Cebu, Philippines','Barcelona, Spain','Bangkok, Thailand','Sydney, Australia','Dubai, UAE','Singapore','London, UK','Amsterdam, Netherlands','Kyoto, Japan','Istanbul, Turkey'];
 
     function setupAutocomplete(inputId, dropdownId) {
         const input = document.getElementById(inputId);
         const dropdown = document.getElementById(dropdownId);
         if (!input || !dropdown) return;
-        input.addEventListener('input', function() {
+        input.addEventListener('input', function () {
             const val = this.value.trim().toLowerCase();
             dropdown.innerHTML = '';
             if (!val) { dropdown.style.display = 'none'; return; }
@@ -374,11 +377,7 @@
                 const item = document.createElement('div');
                 item.className = 'autocomplete-item';
                 item.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:8px;flex-shrink:0;opacity:0.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>${m}`;
-                item.addEventListener('click', () => {
-                    input.value = m;
-                    dropdown.style.display = 'none';
-                    if (inputId === 'destination') { checkInterests(); }
-                });
+                item.addEventListener('click', () => { input.value = m; dropdown.style.display = 'none'; });
                 dropdown.appendChild(item);
             });
             dropdown.style.display = 'block';
@@ -399,12 +398,12 @@
         document.getElementById('create-trip').scrollIntoView({ behavior: 'smooth' });
     }
 
-    // Interest counter
+    // ---- Interest Counter ----
     const checkboxes = document.querySelectorAll('.interest-tag input[type="checkbox"]');
     const counter = document.getElementById('interest-counter');
     const limit = 5;
     checkboxes.forEach(box => {
-        box.addEventListener('change', function() {
+        box.addEventListener('change', function () {
             const checked = document.querySelectorAll('.interest-tag input:checked').length;
             if (checked > limit) { this.checked = false; return; }
             counter.textContent = `${Math.min(checked, limit)} / 5 selected`;
@@ -433,9 +432,7 @@
         });
     });
 
-    function checkInterests() {}
-
-    // Budget validation
+    // ---- Budget Validation ----
     function checkBudgetExceeded() {
         const total = parseFloat(document.getElementById('budget_total').value) || 0;
         const sum = ['budget_accommodation','budget_food','budget_activities','budget_transport']
@@ -449,11 +446,11 @@
         if (el) el.addEventListener('input', checkBudgetExceeded);
     });
     const tripForm = document.getElementById('budget_total')?.closest('form');
-    if (tripForm) tripForm.addEventListener('submit', function(e) {
+    if (tripForm) tripForm.addEventListener('submit', function (e) {
         if (checkBudgetExceeded()) { if (!confirm('Breakdown exceeds budget. Continue anyway?')) e.preventDefault(); }
     });
 
-    // Spots panel
+    // ---- Spots Panel ----
     const spotsCache = {};
     let pendingRequests = {};
     function closeSpotsPanel() { document.getElementById('spots-panel').style.display = 'none'; }
@@ -465,7 +462,7 @@
         let allSpots = [], cats = [];
         for (const box of checked) {
             const key = dest + '|' + box.value;
-            if (spotsCache[key]?.length) { allSpots = allSpots.concat(spotsCache[key].map(s => ({...s, _cat: box.value}))); cats.push(box.value); }
+            if (spotsCache[key]?.length) { allSpots = allSpots.concat(spotsCache[key].map(s => ({ ...s, _cat: box.value }))); cats.push(box.value); }
         }
         grid.innerHTML = '';
         document.getElementById('spots-empty').style.display = 'none';
@@ -494,7 +491,7 @@
             const data = await resp.json();
             if (data.error) { document.getElementById('spots-error').textContent = 'Error: ' + data.error; document.getElementById('spots-error').style.display = 'block'; spotsCache[key] = []; }
             else { spotsCache[key] = data.spots || []; }
-        } catch(e) { document.getElementById('spots-error').textContent = 'Could not load spots.'; document.getElementById('spots-error').style.display = 'block'; spotsCache[key] = []; }
+        } catch (e) { document.getElementById('spots-error').textContent = 'Could not load spots.'; document.getElementById('spots-error').style.display = 'block'; spotsCache[key] = []; }
         finally { delete pendingRequests[key]; document.getElementById('spots-loading').style.display = 'none'; renderSpotsGrid(); }
     }
 </script>

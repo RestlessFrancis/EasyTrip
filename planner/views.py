@@ -5,6 +5,9 @@ from django.contrib.auth.models import User
 from django.db import IntegrityError
 from django.http import JsonResponse
 from django.conf import settings
+from django.core.mail import send_mail
+from django.template.loader import render_to_string
+from django.utils.html import strip_tags
 from .models import Trip, ItineraryDay
 import datetime
 import json
@@ -261,6 +264,30 @@ def home(request):
             longitude=lon
         )
 
+        # Send confirmation email if user is logged in and has an email
+        if request.user.is_authenticated and request.user.email:
+            print(f"[EMAIL] Attempting to send to: {request.user.email}")
+            try:
+                html_message = render_to_string('emails/trip_created.html', {
+                    'user': request.user,
+                    'trip': trip,
+                    'site_url': settings.SITE_URL,
+                })
+                plain_message = strip_tags(html_message)
+                send_mail(
+                    subject=f'✈️ Your Easytrip itinerary for {trip.destination} is ready!',
+                    message=plain_message,
+                    from_email=settings.DEFAULT_FROM_EMAIL,
+                    recipient_list=[request.user.email],
+                    html_message=html_message,
+                    fail_silently=False,  # show errors now
+                )
+                print(f"[EMAIL] Successfully sent to {request.user.email}")
+            except Exception as e:
+                print(f"[EMAIL ERROR] {e}")
+        else:
+            print(f"[EMAIL] Skipped — authenticated: {request.user.is_authenticated}, email: '{getattr(request.user, 'email', None)}'")
+
         return redirect('trip_detail', trip_id=trip.id)
 
     if request.user.is_authenticated:
@@ -359,6 +386,7 @@ def trip_detail(request, trip_id):
         'recommended_spots': recommended_spots,
         'budget_exceeded': budget_exceeded,
         'breakdown_total': breakdown_total,
+        'mapbox_token': settings.MAPBOX_TOKEN,
     }
     return render(request, 'detail.html', context)
 
@@ -488,9 +516,15 @@ def signup_view(request):
         return redirect('home')
     if request.method == 'POST':
         username = request.POST.get('username', '')
-        email = request.POST.get('email', '')
+        email = request.POST.get('email', '').strip()
         password = request.POST.get('password', '')
         confirm_password = request.POST.get('confirm_password', '')
+
+        if not email:
+            return render(request, 'signup.html', {
+                'error': 'Email address is required to receive trip notifications.',
+                'username': username,
+            })
 
         if password != confirm_password:
             return render(request, 'signup.html', {

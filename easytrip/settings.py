@@ -12,7 +12,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-79p58w0l&uqp&u9^te_n3zxnick#r^%7=_qo-ic8l-e++io@#d'
 
 # Groq API Key
-GROQ_API_KEY = os.environ.get('GROQ_API_KEY')
+GROQ_API_KEY = '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'
 
 # Mapbox Token
 MAPBOX_TOKEN = 'your-mapbox-token-here'
@@ -101,3 +101,18 @@ STATICFILES_DIRS = [BASE_DIR / 'static']
 # Authentication
 LOGIN_URL = '/login/'
 LOGIN_REDIRECT_URL = '/'
+
+# Site URL (change to your real domain when deploying)
+SITE_URL = 'http://127.0.0.1:8000'
+
+# Site URL (change to your real domain when deploying)
+SITE_URL = 'http://127.0.0.1:8000'
+
+# ---- Email (Gmail SMTP) ----
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'frncs4class@gmail.com'       # replace with your Gmail
+EMAIL_HOST_PASSWORD = 'esjykyispoyqbwpg'  # replace with Gmail App Password
+DEFAULT_FROM_EMAIL = 'Easytrip ✈️ <frncs4class@gmail.com>'
