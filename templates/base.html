@@ -1,81 +1,127 @@
 <!DOCTYPE html>
 {% load static %}
-<html lang="en">
+<html lang="en" data-theme="light">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Easytrip{% endblock %}</title>
+    <title>{% block title %}Easytrip — AI Travel Planner{% endblock %}</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
     {% block extra_head %}{% endblock %}
 </head>
 
 <body>
-
     <!-- Navigation Bar -->
     <nav class="navbar">
         <div class="nav-container">
+            <!-- Logo -->
             <a href="{% url 'home' %}" class="logo">
-                {% comment %} Could use an SVG icon for logo here. using text for now {% endcomment %}
-                <span style="font-size: 1.5rem; font-weight: 500;">Easytrip</span>
+                <div class="logo-icon">✈️</div>
+                <span class="logo-text">Easytrip</span>
             </a>
 
+            <!-- Nav Links -->
             <ul class="nav-links">
                 <li><a href="{% url 'home' %}">Home</a></li>
                 <li><a href="{% url 'home' %}#features">Features</a></li>
-                <li><a href="{% url 'home' %}#create-trip">Destinations</a></li>
+                <li><a href="{% url 'home' %}#create-trip">Plan Trip</a></li>
                 <li><a href="{% url 'home' %}#explore">Explore</a></li>
             </ul>
 
+            <!-- Nav Actions -->
             <div class="nav-actions">
+                <!-- Dark Mode Toggle -->
+                <button class="dark-mode-toggle" id="darkModeToggle" aria-label="Toggle dark mode" title="Toggle dark mode">
+                    <svg id="toggleIcon" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+                </button>
+
                 {% if user.is_authenticated %}
-                <span style="font-size: 0.9rem; font-weight: 500; color: #4a4a4a;">Hi, {{ user.username }}</span>
-                <a href="{% url 'dashboard' %}" class="btn btn-primary dark-green-btn btn-sm">Go to Dashboard</a>
-                <a href="{% url 'logout' %}" class="btn btn-outline btn-sm"
-                    style="border: 1px solid var(--border-color);">Log Out</a>
+                <div class="nav-user">
+                    <div class="nav-avatar">{{ user.username|slice:":1"|upper }}</div>
+                    <span class="nav-username">{{ user.username }}</span>
+                </div>
+                <a href="{% url 'dashboard' %}" class="btn btn-primary dark-green-btn btn-sm">Dashboard</a>
+                <a href="{% url 'logout' %}" class="btn btn-ghost btn-sm">Log Out</a>
                 {% else %}
-                <a href="{% url 'login' %}" class="btn btn-outline btn-sm"
-                    style="border: 1px solid var(--border-color);">Log In</a>
-                <a href="{% url 'signup' %}" class="btn btn-primary dark-green-btn btn-sm">Sign Up</a>
+                <a href="{% url 'login' %}" class="btn btn-ghost btn-sm">Log In</a>
+                <a href="{% url 'signup' %}" class="btn btn-primary dark-green-btn btn-sm">Sign Up Free</a>
                 {% endif %}
             </div>
 
-            <!-- Mobile Menu Toggle (Optional for now) -->
+            <!-- Mobile Toggle -->
             <button class="mobile-toggle" aria-label="Toggle navigation">
-                <span></span>
-                <span></span>
-                <span></span>
+                <span></span><span></span><span></span>
             </button>
         </div>
     </nav>
 
-    <!-- Main Content Area -->
+    <!-- Main Content -->
     <main>
-        {% block content %}
-        {% endblock %}
+        {% block content %}{% endblock %}
     </main>
 
-    <!-- Footer Area (Optional if needed later) -->
-    <footer>
-        <div class="footer-container">
-            <p>&copy; {% now "Y" %} Easytrip@Pepito. All rights reserved.</p>
+    <!-- Footer -->
+    <footer class="site-footer">
+        <div class="footer-inner">
+            <div class="footer-brand">
+                <div class="logo-icon">✈️</div>
+                <span class="logo-text">Easytrip</span>
+                <p>AI-powered travel planning, free forever.</p>
+            </div>
+            <div class="footer-links">
+                <div class="footer-col">
+                    <h5>Product</h5>
+                    <a href="{% url 'home' %}#features">Features</a>
+                    <a href="{% url 'home' %}#create-trip">Plan a Trip</a>
+                    <a href="{% url 'home' %}#explore">Explore</a>
+                </div>
+                <div class="footer-col">
+                    <h5>Account</h5>
+                    {% if user.is_authenticated %}
+                    <a href="{% url 'dashboard' %}">Dashboard</a>
+                    <a href="{% url 'logout' %}">Log Out</a>
+                    {% else %}
+                    <a href="{% url 'login' %}">Log In</a>
+                    <a href="{% url 'signup' %}">Sign Up</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; {% now "Y" %} Easytrip by Pepito. All rights reserved.</p>
         </div>
     </footer>
 
     <script>
-        // Simple mobile menu toggle
+        // Dark mode
+        const moonSVG = `<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>`;
+        const sunSVG = `<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>`;
+
+        const toggle = document.getElementById('darkModeToggle');
+        const icon = document.getElementById('toggleIcon');
+        const html = document.documentElement;
+
+        const saved = localStorage.getItem('theme') || 'light';
+        html.setAttribute('data-theme', saved);
+        icon.innerHTML = saved === 'dark' ? sunSVG : moonSVG;
+
+        toggle.addEventListener('click', () => {
+            const current = html.getAttribute('data-theme');
+            const next = current === 'dark' ? 'light' : 'dark';
+            html.setAttribute('data-theme', next);
+            localStorage.setItem('theme', next);
+            icon.innerHTML = next === 'dark' ? sunSVG : moonSVG;
+        });
+
+        // Mobile menu
         document.querySelector('.mobile-toggle').addEventListener('click', function () {
             document.querySelector('.nav-links').classList.toggle('active');
-            let actions = document.querySelector('.nav-actions');
-            if (actions) actions.classList.toggle('active');
+            document.querySelector('.nav-actions').classList.toggle('active');
         });
     </script>
     {% block extra_scripts %}{% endblock %}
 </body>
-
 </html>

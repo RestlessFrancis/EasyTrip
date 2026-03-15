@@ -10,4 +10,5 @@ urlpatterns = [
     path('signup/', views.signup_view, name='signup'),
     path('logout/', views.logout_view, name='logout'),
     path('api/spots/', views.spots_by_category, name='spots_by_category'),
+    path('trips/<int:trip_id>/generate-itinerary/', views.generate_itinerary, name='generate_itinerary'),
 ]

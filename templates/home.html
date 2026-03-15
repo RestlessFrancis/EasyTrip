@@ -2,692 +2,421 @@
 {% load static %}
 
 {% block content %}
-<!-- Hero Section -->
+
+<!-- ===== HERO ===== -->
 <section class="hero-section">
+    <div class="hero-bg">
+        <img src="https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?auto=format&fit=crop&q=80&w=1600" alt="Travel">
+        <div class="hero-overlay"></div>
+    </div>
     <div class="hero-content">
-        <span class="pill-tag">Free to use</span>
-        <h1>Plan your perfect trip in minutes</h1>
-        <p>Generate complete, day-by-day travel itineraries tailored to your preferences. No more hours of research.
-            Just tell us where you want to go.</p>
-        <div class="hero-actions">
-            <a href="#create-trip" class="btn btn-primary dark-green-btn">Generate My Plan</a>
-        </div>
-    </div>
-    <div class="hero-images">
-        <div class="hero-img-box img-1">
-            <img src="https://images.unsplash.com/photo-1527842891421-42eec6e703ea?auto=format&fit=crop&q=80&w=600"
-                alt="Mountain Landscape">
-        </div>
-        <div class="hero-img-box img-2">
-            <img src="https://images.unsplash.com/photo-1506929562872-bb421503ef21?auto=format&fit=crop&q=80&w=600"
-                alt="Coastal View">
-        </div>
-        <div class="hero-img-box img-3">
-            <img src="https://images.unsplash.com/photo-1447752875215-b2761acb3c5d?auto=format&fit=crop&q=80&w=600"
-                alt="Forest path">
-        </div>
-        <div class="hero-img-box img-4">
-            <img src="https://images.unsplash.com/photo-1499793983690-e29da59ef1c2?auto=format&fit=crop&q=80&w=600"
-                alt="Beach aerial">
-        </div>
-    </div>
-</section>
+        <span class="hero-badge">✨ AI-Powered Travel Planning</span>
+        <h1>Your next adventure<br>starts here</h1>
+        <p>Generate complete, day-by-day itineraries tailored to your interests in seconds. Free, forever.</p>
 
-<!-- Features Section -->
-<section id="features" style="padding: 6rem 2rem; background-color: var(--white);">
-    <div class="form-header text-center" style="margin-bottom: 4rem;">
-        <span class="pill-tag" style="margin-bottom: 1rem;">Why Easytrip?</span>
-        <h2>Everything you need for the perfect trip</h2>
-        <p>Our AI-powered platform takes the hassle out of travel planning.</p>
-    </div>
-
-    <div
-        style="max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 3rem;">
-        <div style="text-align: center; padding: 2rem; border-radius: 16px; background-color: var(--background);">
-            <div
-                style="width: 64px; height: 64px; margin: 0 auto 1.5rem; background-color: var(--primary-green); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
-                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <circle cx="12" cy="12" r="10"></circle>
-                    <polyline points="12 6 12 12 16 14"></polyline>
+        <!-- Quick Search Bar -->
+        <div class="hero-search-bar">
+            <div class="search-input-wrap">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="search-icon">
+                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                    <circle cx="12" cy="10" r="3"></circle>
                 </svg>
+                <input type="text" id="hero-destination" placeholder="Where do you want to go?" autocomplete="off">
+                <div id="hero-autocomplete" class="autocomplete-dropdown"></div>
             </div>
-            <h3 style="margin-bottom: 1rem;">Save Time</h3>
-            <p style="color: #666; line-height: 1.6;">Stop spending hours researching. Let our AI build a comprehensive,
-                day-by-day itinerary in seconds.</p>
-        </div>
-
-        <div style="text-align: center; padding: 2rem; border-radius: 16px; background-color: var(--background);">
-            <div
-                style="width: 64px; height: 64px; margin: 0 auto 1.5rem; background-color: var(--primary-green); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
-                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-                </svg>
-            </div>
-            <h3 style="margin-bottom: 1rem;">Personalized Plans</h3>
-            <p style="color: #666; line-height: 1.6;">From foodies to hikers, tell us your interests and we'll tailor
-                every detail of the trip to exactly what you love.</p>
-        </div>
-
-        <div style="text-align: center; padding: 2rem; border-radius: 16px; background-color: var(--background);">
-            <div
-                style="width: 64px; height: 64px; margin: 0 auto 1.5rem; background-color: var(--primary-green); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
-                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"></polygon>
-                    <line x1="9" y1="3" x2="9" y2="21"></line>
-                    <line x1="15" y1="3" x2="15" y2="21"></line>
-                </svg>
-            </div>
-            <h3 style="margin-bottom: 1rem;">Interactive Maps</h3>
-            <p style="color: #666; line-height: 1.6;">Every itinerary comes with a built-in satellite map pinpointing
-                your destination and key highlights.</p>
-        </div>
-    </div>
-</section>
-
-<!-- Form Section -->
-<section id="create-trip" class="form-section">
-    <div class="form-header text-center">
-        <h2>Create your trip</h2>
-        <p>Tell us what you have in mind and we will build your perfect itinerary.</p>
-    </div>
-
-    <div class="trip-card-form">
-        <form action="#" method="POST">
-            {% csrf_token %}
-            <div class="form-group full-width">
-                <label for="destination">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                        style="vertical-align: middle; margin-right: 4px; color: var(--primary-green)">
-                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-                        <circle cx="12" cy="10" r="3"></circle>
-                    </svg>
-                    Destination
-                </label>
-                <input type="text" id="destination" name="destination" placeholder="Search your destination" required>
-            </div>
-
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="trip_length">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="2"
-                            style="vertical-align: middle; margin-right: 4px; color: var(--primary-green)">
-                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                            <line x1="16" y1="2" x2="16" y2="6"></line>
-                            <line x1="8" y1="2" x2="8" y2="6"></line>
-                            <line x1="3" y1="10" x2="21" y2="10"></line>
-                        </svg>
-                        Trip Length
-                    </label>
-                    <div class="number-input-wrp">
-                        <button type="button" class="number-btn" onclick="decrement('trip_length')">-</button>
-                        <input type="number" id="trip_length" name="trip_length" value="3" min="1" max="30">
-                        <div style="padding-right: 12px; font-size: 0.9rem; color: #666">days</div>
-                        <button type="button" class="number-btn" onclick="increment('trip_length')">+</button>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label for="group_size">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="2"
-                            style="vertical-align: middle; margin-right: 4px; color: var(--primary-green)">
-                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                            <circle cx="9" cy="7" r="4"></circle>
-                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-                            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-                        </svg>
-                        Group Size
-                    </label>
-                    <input type="text" id="group_size" name="group_size" placeholder="How many people?">
-                </div>
-            </div>
-
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="start_date">Start Date</label>
-                    <input type="date" id="start_date" name="start_date">
-                </div>
-                <div class="form-group">
-                    <label for="end_date">End Date</label>
-                    <input type="date" id="end_date" name="end_date">
-                </div>
-            </div>
-
-            <div class="form-group full-width">
-                <label>
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                        style="vertical-align: middle; margin-right: 4px; color: var(--primary-green)">
-                        <path
-                            d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z">
-                        </path>
-                    </svg>
-                    Interests (pick up to 5)
-                </label>
-                <div class="interests-grid">
-                    <div class="interest-tag">
-                        <input type="checkbox" id="int_food" name="interests" value="Food">
-                        <label for="int_food">Food & Dining</label>
-                    </div>
-                    <div class="interest-tag">
-                        <input type="checkbox" id="int_history" name="interests" value="History">
-                        <label for="int_history">History & Culture</label>
-                    </div>
-                    <div class="interest-tag">
-                        <input type="checkbox" id="int_nature" name="interests" value="Nature">
-                        <label for="int_nature">Nature & Hiking</label>
-                    </div>
-                    <div class="interest-tag">
-                        <input type="checkbox" id="int_beaches" name="interests" value="Beaches">
-                        <label for="int_beaches">Beaches & Water</label>
-                    </div>
-                    <div class="interest-tag">
-                        <input type="checkbox" id="int_nightlife" name="interests" value="Nightlife">
-                        <label for="int_nightlife">Nightlife</label>
-                    </div>
-                    <div class="interest-tag">
-                        <input type="checkbox" id="int_shopping" name="interests" value="Shopping">
-                        <label for="int_shopping">Shopping</label>
-                    </div>
-                    <div class="interest-tag">
-                        <input type="checkbox" id="int_photography" name="interests" value="Photography">
-                        <label for="int_photography">Photography</label>
-                    </div>
-                    <div class="interest-tag">
-                        <input type="checkbox" id="int_architecture" name="interests" value="Architecture">
-                        <label for="int_architecture">Architecture</label>
-                    </div>
-                    <div class="interest-tag">
-                        <input type="checkbox" id="int_adventure" name="interests" value="Adventure">
-                        <label for="int_adventure">Adventure Sports</label>
-                    </div>
-                    <div class="interest-tag">
-                        <input type="checkbox" id="int_art" name="interests" value="Art">
-                        <label for="int_art">Art & Museums</label>
-                    </div>
-                    <div class="interest-tag">
-                        <input type="checkbox" id="int_wellness" name="interests" value="Wellness">
-                        <label for="int_wellness">Wellness & Spa</label>
-                    </div>
-                    <div class="interest-tag">
-                        <input type="checkbox" id="int_markets" name="interests" value="Markets">
-                        <label for="int_markets">Local Markets</label>
-                    </div>
-                </div>
-            </div>
-
-            <div class="form-group full-width" style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border-color);">
-                <label>
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                        style="vertical-align: middle; margin-right: 4px; color: var(--primary-green)">
-                        <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
-                        <line x1="1" y1="10" x2="23" y2="10"></line>
-                    </svg>
-                    Budget Plan <span style="font-weight: 400; color: #888;">(optional)</span>
-                </label>
-                <div class="form-row" style="margin-top: 0.5rem;">
-                    <div class="form-group" style="flex: 1;">
-                        <label for="budget_total" style="font-size: 0.85rem; color: #666;">Total budget</label>
-                        <input type="number" id="budget_total" name="budget_total" placeholder="e.g. 500"
-                            min="0" step="0.01" style="width: 100%;">
-                    </div>
-                    <div class="form-group" style="flex: 0 0 110px;">
-                        <label for="budget_currency" style="font-size: 0.85rem; color: #666;">Currency</label>
-                        <select id="budget_currency" name="budget_currency" style="width: 100%; padding: 0.65rem 0.75rem; border: 1px solid var(--border-color); border-radius: 8px; background: white; font-family: inherit;">
-                            <option value="USD">USD</option>
-                            <option value="EUR">EUR</option>
-                            <option value="GBP">GBP</option>
-                            <option value="PHP">PHP</option>
-                            <option value="JPY">JPY</option>
-                        </select>
-                    </div>
-                </div>
-                <p style="font-size: 0.8rem; color: #888; margin-top: 0.75rem; margin-bottom: 0.5rem;">Breakdown (optional)</p>
-                <div class="form-row budget-breakdown">
-                    <div class="form-group" style="flex: 1;">
-                        <input type="number" id="budget_accommodation" name="budget_accommodation" placeholder="Accommodation"
-                            min="0" step="0.01" style="width: 100%;">
-                    </div>
-                    <div class="form-group" style="flex: 1;">
-                        <input type="number" id="budget_food" name="budget_food" placeholder="Food & Dining"
-                            min="0" step="0.01" style="width: 100%;">
-                    </div>
-                    <div class="form-group" style="flex: 1;">
-                        <input type="number" id="budget_activities" name="budget_activities" placeholder="Activities"
-                            min="0" step="0.01" style="width: 100%;">
-                    </div>
-                    <div class="form-group" style="flex: 1;">
-                        <input type="number" id="budget_transport" name="budget_transport" placeholder="Transport"
-                            min="0" step="0.01" style="width: 100%;">
-                    </div>
-                </div>
-                <p id="budget-warning" style="display:none; font-size: 0.85rem; color: #c0392b; background: #fde8e8; padding: 0.5rem 0.75rem; border-radius: 8px; margin-top: 0.75rem;">
-                    ⚠️ Your breakdown total exceeds your budget. Please adjust your amounts.
-                </p>
-            </div>
-
-            <!-- Spots Discovery Panel -->
-            <div id="spots-panel"
-                style="display:none; margin-top: 1.5rem; border-top: 1px solid var(--border-color); padding-top: 1.25rem;">
-                <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:0.75rem;">
-                    <h4 id="spots-panel-title"
-                        style="margin:0; font-size:0.95rem; color:var(--primary-green); font-weight:600;"></h4>
-                    <button type="button" onclick="closeSpotsPanel()"
-                        style="background:none;border:none;cursor:pointer;font-size:1.1rem;color:#aaa;line-height:1;">✕</button>
-                </div>
-                <div id="spots-loading" style="display:none; text-align:center; padding:1.25rem 0;">
-                    <div
-                        style="display:inline-block; width:24px; height:24px; border:3px solid var(--border-color); border-top-color:var(--primary-green); border-radius:50%; animation:spin 0.8s linear infinite;">
-                    </div>
-                    <p style="margin-top:0.5rem; color:#888; font-size:0.82rem;">Finding spots...</p>
-                </div>
-                <div id="spots-grid"
-                    style="display:grid; grid-template-columns:repeat(auto-fill, minmax(160px, 1fr)); gap:0.65rem;">
-                </div>
-                <p id="spots-empty"
-                    style="display:none; color:#999; font-size:0.88rem; text-align:center; padding:0.75rem 0;">No spots
-                    found for this category here.</p>
-                <p id="spots-error"
-                    style="display:none; color:#e05555; font-size:0.82rem; text-align:center; padding:0.5rem 0;"></p>
-            </div>
-
-            <button type="submit" class="btn btn-primary dark-green-btn"
-                style="width: 100%; margin-top: 1rem; padding: 16px;">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                    style="vertical-align: text-bottom; margin-right: 8px;">
-                    <path
-                        d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z">
-                    </path>
-                    <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
-                    <line x1="12" y1="22.08" x2="12" y2="12"></line>
-                </svg>
-                Generate My Itinerary
+            <button class="hero-search-btn" onclick="goToForm()">
+                Plan My Trip
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
             </button>
-            <p class="text-center" style="font-size: 0.85rem; color: #888; margin-top: 1rem;">Free forever. Your
-                itinerary will be ready in seconds.</p>
-        </form>
+        </div>
+
+        <!-- Quick Stats -->
+        <div class="hero-stats">
+            <div class="hero-stat"><strong>10k+</strong><span>Trips Planned</span></div>
+            <div class="hero-stat-divider"></div>
+            <div class="hero-stat"><strong>150+</strong><span>Destinations</span></div>
+            <div class="hero-stat-divider"></div>
+            <div class="hero-stat"><strong>Free</strong><span>Forever</span></div>
+        </div>
     </div>
 </section>
 
-{% if user.is_authenticated and recent_trips %}
-<!-- My Trips Section (Mock Data) -->
-<section class="trips-section">
-    <div class="trips-header">
-        <h3>My Trips</h3>
-        <p>Your planned adventures, all in one place.</p>
+<!-- ===== FEATURES ===== -->
+<section id="features" class="features-section">
+    <div class="section-inner">
+        <div class="section-header">
+            <span class="pill-tag">Why Easytrip?</span>
+            <h2>Everything you need for the perfect trip</h2>
+            <p>Our AI-powered platform takes the hassle out of travel planning.</p>
+        </div>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon" style="background: linear-gradient(135deg, #667eea, #764ba2);">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                </div>
+                <h3>Save Time</h3>
+                <p>Stop spending hours researching. Let our AI build a comprehensive, day-by-day itinerary in seconds.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon" style="background: linear-gradient(135deg, #f093fb, #f5576c);">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                </div>
+                <h3>Personalized Plans</h3>
+                <p>From foodies to hikers, tell us your interests and we'll tailor every detail to exactly what you love.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon" style="background: linear-gradient(135deg, #4facfe, #00f2fe);">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"></polygon><line x1="9" y1="3" x2="9" y2="21"></line><line x1="15" y1="3" x2="15" y2="21"></line></svg>
+                </div>
+                <h3>Interactive Maps</h3>
+                <p>Every itinerary comes with a built-in map pinpointing your destination and key highlights.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon" style="background: linear-gradient(135deg, #43e97b, #38f9d7);">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>
+                </div>
+                <h3>Budget Tracking</h3>
+                <p>Set your budget and get cost estimates per day and activity so you never overspend on your trip.</p>
+            </div>
+        </div>
     </div>
+</section>
 
-    <div class="trips-grid">
-        <!-- Trip 1 -->
-        <a href="#" class="trip-card">
-            <img src="https://images.unsplash.com/photo-1559511260-66a654ae982a?auto=format&fit=crop&q=80&w=800"
-                alt="Vancouver">
-            <div class="trip-card-overlay">
-                <h4>Vancouver, British Columbia, Canada</h4>
-                <p>Vancouver is a vibrant coastal city nestled between mountains and the Pacific Ocean, renowned for
-                    its...</p>
-                <div class="trip-meta">
-                    <span>
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="2" style="vertical-align: middle; margin-right: 4px;">
-                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                            <line x1="16" y1="2" x2="16" y2="6"></line>
-                            <line x1="8" y1="2" x2="8" y2="6"></line>
-                            <line x1="3" y1="10" x2="21" y2="10"></line>
-                        </svg>
-                        Feb 16 - Feb 23, 2026
-                    </span>
-                    <span>
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="2" style="vertical-align: middle; margin-right: 4px;">
-                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                            <circle cx="9" cy="7" r="4"></circle>
-                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-                            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-                        </svg>
-                        5-8 Travelers
-                    </span>
+<!-- ===== TRIP FORM ===== -->
+<section id="create-trip" class="form-section">
+    <div class="section-inner">
+        <div class="section-header">
+            <span class="pill-tag">Get Started</span>
+            <h2>Create your trip</h2>
+            <p>Tell us what you have in mind and we will build your perfect itinerary.</p>
+        </div>
+
+        <div class="trip-card-form">
+            <form action="#" method="POST">
+                {% csrf_token %}
+
+                <!-- Destination -->
+                <div class="form-group full-width" style="position:relative;">
+                    <label for="destination">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:5px;color:var(--primary)"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                        Destination
+                    </label>
+                    <input type="text" id="destination" name="destination" placeholder="e.g. Tokyo, Bali, Paris..." required autocomplete="off">
+                    <div id="form-autocomplete" class="autocomplete-dropdown"></div>
                 </div>
-            </div>
-        </a>
 
-
-
-        <!-- Trip 3 -->
-        <a href="#" class="trip-card">
-            <img src="https://images.unsplash.com/photo-1530122037265-a5f1f91d3b99?auto=format&fit=crop&q=80&w=800"
-                alt="Switzerland">
-            <div class="trip-card-overlay">
-                <h4>Switzerland</h4>
-                <p>Switzerland, a landlocked country in Central Europe, is renowned for its breathtaking Alpine
-                    landscapes...</p>
-                <div class="trip-meta">
-                    <span>
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="2" style="vertical-align: middle; margin-right: 4px;">
-                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                            <line x1="16" y1="2" x2="16" y2="6"></line>
-                            <line x1="8" y1="2" x2="8" y2="6"></line>
-                            <line x1="3" y1="10" x2="21" y2="10"></line>
-                        </svg>
-                        Feb 16 - Feb 27, 2026
-                    </span>
-                    <span>
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="2" style="vertical-align: middle; margin-right: 4px;">
-                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                            <circle cx="12" cy="7" r="4"></circle>
-                        </svg>
-                        2 Travelers
-                    </span>
+                <div class="form-row">
+                    <!-- Trip Length -->
+                    <div class="form-group">
+                        <label for="trip_length">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:5px;color:var(--primary)"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                            Trip Length
+                        </label>
+                        <div class="number-input-wrp">
+                            <button type="button" class="number-btn" onclick="decrement('trip_length')">−</button>
+                            <input type="number" id="trip_length" name="trip_length" value="3" min="1" max="30">
+                            <span class="number-unit">days</span>
+                            <button type="button" class="number-btn" onclick="increment('trip_length')">+</button>
+                        </div>
+                    </div>
+                    <!-- Group Size -->
+                    <div class="form-group">
+                        <label for="group_size">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:5px;color:var(--primary)"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                            Group Size
+                        </label>
+                        <input type="text" id="group_size" name="group_size" placeholder="e.g. 2 adults, 1 child">
+                    </div>
                 </div>
-            </div>
-        </a>
 
-        <!-- Trip 4 -->
-        <a href="#" class="trip-card">
-            <img src="https://images.unsplash.com/photo-1499856871958-5b9627545d1a?auto=format&fit=crop&q=80&w=800"
-                alt="Paris">
-            <div class="trip-card-overlay">
-                <h4>Paris, France</h4>
-                <p>Paris, the City of Light, captivates visitors with its unparalleled blend of iconic architecture,
-                    world-clas...</p>
-                <div class="trip-meta">
-                    <span>
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="2" style="vertical-align: middle; margin-right: 4px;">
-                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                            <line x1="16" y1="2" x2="16" y2="6"></line>
-                            <line x1="8" y1="2" x2="8" y2="6"></line>
-                            <line x1="3" y1="10" x2="21" y2="10"></line>
-                        </svg>
-                        Feb 17 - Feb 20, 2026
-                    </span>
-                    <span>
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="2" style="vertical-align: middle; margin-right: 4px;">
-                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                            <circle cx="12" cy="7" r="4"></circle>
-                        </svg>
-                        2 Travelers
-                    </span>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="start_date">Start Date</label>
+                        <input type="date" id="start_date" name="start_date">
+                    </div>
+                    <div class="form-group">
+                        <label for="end_date">End Date</label>
+                        <input type="date" id="end_date" name="end_date">
+                    </div>
                 </div>
+
+                <!-- Interests -->
+                <div class="form-group full-width">
+                    <label>
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:5px;color:var(--primary)"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+                        Interests <span class="label-hint">(pick up to 5)</span>
+                    </label>
+                    <div class="interests-grid">
+                        {% for val, label, emoji in interest_choices %}
+                        <div class="interest-tag">
+                            <input type="checkbox" id="int_{{ val|lower }}" name="interests" value="{{ val }}">
+                            <label for="int_{{ val|lower }}">{{ emoji }} {{ label }}</label>
+                        </div>
+                        {% empty %}
+                        <div class="interest-tag"><input type="checkbox" id="int_food" name="interests" value="Food"><label for="int_food">🍽️ Food & Dining</label></div>
+                        <div class="interest-tag"><input type="checkbox" id="int_history" name="interests" value="History"><label for="int_history">🏛️ History & Culture</label></div>
+                        <div class="interest-tag"><input type="checkbox" id="int_nature" name="interests" value="Nature"><label for="int_nature">🌿 Nature & Hiking</label></div>
+                        <div class="interest-tag"><input type="checkbox" id="int_beaches" name="interests" value="Beaches"><label for="int_beaches">🏖️ Beaches & Water</label></div>
+                        <div class="interest-tag"><input type="checkbox" id="int_nightlife" name="interests" value="Nightlife"><label for="int_nightlife">🎵 Nightlife</label></div>
+                        <div class="interest-tag"><input type="checkbox" id="int_shopping" name="interests" value="Shopping"><label for="int_shopping">🛍️ Shopping</label></div>
+                        <div class="interest-tag"><input type="checkbox" id="int_photography" name="interests" value="Photography"><label for="int_photography">📸 Photography</label></div>
+                        <div class="interest-tag"><input type="checkbox" id="int_architecture" name="interests" value="Architecture"><label for="int_architecture">🏗️ Architecture</label></div>
+                        <div class="interest-tag"><input type="checkbox" id="int_adventure" name="interests" value="Adventure"><label for="int_adventure">🧗 Adventure Sports</label></div>
+                        <div class="interest-tag"><input type="checkbox" id="int_art" name="interests" value="Art"><label for="int_art">🎨 Art & Museums</label></div>
+                        <div class="interest-tag"><input type="checkbox" id="int_wellness" name="interests" value="Wellness"><label for="int_wellness">🧘 Wellness & Spa</label></div>
+                        <div class="interest-tag"><input type="checkbox" id="int_markets" name="interests" value="Markets"><label for="int_markets">🛒 Local Markets</label></div>
+                        {% endfor %}
+                    </div>
+                    <p id="interest-counter" class="label-hint" style="margin-top:0.5rem;">0 / 5 selected</p>
+                </div>
+
+                <!-- Budget -->
+                <div class="form-group full-width budget-section">
+                    <label>
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:5px;color:var(--primary)"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>
+                        Budget Plan <span class="label-hint">(optional)</span>
+                    </label>
+                    <div class="form-row" style="margin-top:0.5rem;">
+                        <div class="form-group" style="flex:1;margin-bottom:0;">
+                            <label for="budget_total" class="sub-label">Total budget</label>
+                            <input type="number" id="budget_total" name="budget_total" placeholder="e.g. 500" min="0" step="0.01">
+                        </div>
+                        <div class="form-group" style="flex:0 0 120px;margin-bottom:0;">
+                            <label for="budget_currency" class="sub-label">Currency</label>
+                            <select id="budget_currency" name="budget_currency">
+                                <option value="USD">🇺🇸 USD</option>
+                                <option value="EUR">🇪🇺 EUR</option>
+                                <option value="GBP">🇬🇧 GBP</option>
+                                <option value="PHP" selected>🇵🇭 PHP</option>
+                                <option value="JPY">🇯🇵 JPY</option>
+                                <option value="AUD">🇦🇺 AUD</option>
+                                <option value="SGD">🇸🇬 SGD</option>
+                            </select>
+                        </div>
+                    </div>
+                    <p class="sub-label" style="margin:0.75rem 0 0.5rem;">Breakdown <span class="label-hint">(optional)</span></p>
+                    <div class="budget-breakdown-grid">
+                        <div class="budget-item">
+                            <span class="budget-item-icon">🏨</span>
+                            <input type="number" id="budget_accommodation" name="budget_accommodation" placeholder="Accommodation" min="0" step="0.01">
+                        </div>
+                        <div class="budget-item">
+                            <span class="budget-item-icon">🍽️</span>
+                            <input type="number" id="budget_food" name="budget_food" placeholder="Food & Dining" min="0" step="0.01">
+                        </div>
+                        <div class="budget-item">
+                            <span class="budget-item-icon">🎯</span>
+                            <input type="number" id="budget_activities" name="budget_activities" placeholder="Activities" min="0" step="0.01">
+                        </div>
+                        <div class="budget-item">
+                            <span class="budget-item-icon">🚌</span>
+                            <input type="number" id="budget_transport" name="budget_transport" placeholder="Transport" min="0" step="0.01">
+                        </div>
+                    </div>
+                    <div id="budget-warning" class="alert-warning" style="display:none;">
+                        ⚠️ Your breakdown total exceeds your budget. Please adjust your amounts.
+                    </div>
+                </div>
+
+                <!-- Spots Panel -->
+                <div id="spots-panel" style="display:none; margin-top:1.5rem; border-top:1px solid var(--border); padding-top:1.25rem;">
+                    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.75rem;">
+                        <h4 id="spots-panel-title" style="margin:0;font-size:0.95rem;color:var(--primary);font-weight:600;"></h4>
+                        <button type="button" onclick="closeSpotsPanel()" style="background:none;border:none;cursor:pointer;font-size:1.1rem;color:#aaa;">✕</button>
+                    </div>
+                    <div id="spots-loading" style="display:none;text-align:center;padding:1.25rem 0;">
+                        <div class="spinner-sm"></div>
+                        <p style="margin-top:0.5rem;color:#888;font-size:0.82rem;">Finding spots...</p>
+                    </div>
+                    <div id="spots-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:0.65rem;"></div>
+                    <p id="spots-empty" style="display:none;color:#999;font-size:0.88rem;text-align:center;padding:0.75rem 0;">No spots found for this category.</p>
+                    <p id="spots-error" style="display:none;color:#e05555;font-size:0.82rem;text-align:center;padding:0.5rem 0;"></p>
+                </div>
+
+                <!-- Submit -->
+                <button type="submit" class="btn btn-primary dark-green-btn submit-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:8px;"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+                    Generate My Itinerary
+                </button>
+                <p class="text-center submit-note">Free forever · Ready in seconds · No account required to preview</p>
+            </form>
+        </div>
+    </div>
+</section>
+
+<!-- ===== MY TRIPS ===== -->
+{% if user.is_authenticated and recent_trips %}
+<section class="trips-section">
+    <div class="section-inner">
+        <div class="trips-section-header">
+            <div>
+                <h2>My Recent Trips</h2>
+                <p>Your planned adventures, all in one place.</p>
             </div>
-        </a>
+            <a href="{% url 'dashboard' %}" class="btn btn-outline btn-sm">View All →</a>
+        </div>
+        <div class="trips-grid">
+            {% for trip in recent_trips %}
+            <a href="{% url 'trip_detail' trip.id %}" class="trip-card">
+                <img src="{{ trip.image_url|default:'https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?auto=format&fit=crop&q=80&w=800' }}" alt="{{ trip.destination }}">
+                <div class="trip-card-overlay">
+                    <div class="trip-card-badge">{{ trip.trip_length }} days</div>
+                    <h4>{{ trip.title }}</h4>
+                    <p>{{ trip.overview|truncatechars:80 }}</p>
+                    <div class="trip-meta">
+                        <span>📅 {{ trip.start_date|date:"M d, Y"|default:"TBD" }}</span>
+                        <span>👥 {{ trip.group_size|default:"Travelers" }}</span>
+                    </div>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
     </div>
 </section>
 {% endif %}
 
-<!-- Explore Section -->
-<section id="explore"
-    style="padding: 6rem 2rem; background-color: var(--white); border-top: 1px solid var(--border-color);">
-    <div class="form-header text-center" style="margin-bottom: 4rem;">
-        <span class="pill-tag" style="margin-bottom: 1rem;">Discover</span>
-        <h2>Explore Popular Destinations</h2>
-        <p>Need some inspiration? Check out where other travelers are going.</p>
-    </div>
-
-    <div
-        style="max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem;">
-        <div style="position: relative; height: 300px; border-radius: 16px; overflow: hidden; cursor: pointer;"
-            onclick="document.getElementById('destination').value='Tokyo'; document.getElementById('destination').scrollIntoView({behavior: 'smooth'});">
-            <img src="https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?auto=format&fit=crop&q=80&w=400"
-                alt="Tokyo" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s ease;"
-                onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
-            <div
-                style="position: absolute; bottom: 0; left: 0; right: 0; padding: 2rem 1.5rem; background: linear-gradient(to top, rgba(0,0,0,0.8), transparent); color: white;">
-                <h3 style="margin: 0; font-size: 1.5rem;">Tokyo, Japan</h3>
+<!-- ===== EXPLORE ===== -->
+<section id="explore" class="explore-section">
+    <div class="section-inner">
+        <div class="section-header">
+            <span class="pill-tag">Discover</span>
+            <h2>Explore Popular Destinations</h2>
+            <p>Need some inspiration? Click a destination to start planning.</p>
+        </div>
+        <div class="explore-grid">
+            <div class="explore-card explore-card-large" onclick="setDestination('Tokyo, Japan')">
+                <img src="https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?auto=format&fit=crop&q=80&w=800" alt="Tokyo">
+                <div class="explore-card-overlay">
+                    <h3>Tokyo, Japan</h3>
+                    <p>Culture, cuisine & neon lights</p>
+                </div>
+            </div>
+            <div class="explore-card" onclick="setDestination('Rome, Italy')">
+                <img src="https://images.unsplash.com/photo-1552832230-c0197dd311b5?auto=format&fit=crop&q=80&w=600" alt="Rome">
+                <div class="explore-card-overlay">
+                    <h3>Rome, Italy</h3>
+                    <p>History & architecture</p>
+                </div>
+            </div>
+            <div class="explore-card" onclick="setDestination('Bali, Indonesia')">
+                <img src="https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&q=80&w=600" alt="Bali">
+                <div class="explore-card-overlay">
+                    <h3>Bali, Indonesia</h3>
+                    <p>Temples & tropical beaches</p>
+                </div>
+            </div>
+            <div class="explore-card" onclick="setDestination('New York, USA')">
+                <img src="https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?auto=format&fit=crop&q=80&w=600" alt="New York">
+                <div class="explore-card-overlay">
+                    <h3>New York, USA</h3>
+                    <p>The city that never sleeps</p>
+                </div>
+            </div>
+            <div class="explore-card" onclick="setDestination('Paris, France')">
+                <img src="https://images.unsplash.com/photo-1499856871958-5b9627545d1a?auto=format&fit=crop&q=80&w=600" alt="Paris">
+                <div class="explore-card-overlay">
+                    <h3>Paris, France</h3>
+                    <p>Romance & fine dining</p>
+                </div>
+            </div>
+            <div class="explore-card" onclick="setDestination('Cebu, Philippines')">
+                <img src="https://images.unsplash.com/photo-1518509562904-e7ef99cdcc86?auto=format&fit=crop&q=80&w=600" alt="Cebu">
+                <div class="explore-card-overlay">
+                    <h3>Cebu, Philippines</h3>
+                    <p>Islands & diving paradise</p>
+                </div>
             </div>
         </div>
-
-        <div style="position: relative; height: 300px; border-radius: 16px; overflow: hidden; cursor: pointer;"
-            onclick="document.getElementById('destination').value='Rome'; document.getElementById('destination').scrollIntoView({behavior: 'smooth'});">
-            <img src="https://images.unsplash.com/photo-1552832230-c0197dd311b5?auto=format&fit=crop&q=80&w=400"
-                alt="Rome" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s ease;"
-                onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
-            <div
-                style="position: absolute; bottom: 0; left: 0; right: 0; padding: 2rem 1.5rem; background: linear-gradient(to top, rgba(0,0,0,0.8), transparent); color: white;">
-                <h3 style="margin: 0; font-size: 1.5rem;">Rome, Italy</h3>
-            </div>
-        </div>
-
-        <div style="position: relative; height: 300px; border-radius: 16px; overflow: hidden; cursor: pointer;"
-            onclick="document.getElementById('destination').value='Bali'; document.getElementById('destination').scrollIntoView({behavior: 'smooth'});">
-            <img src="https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&q=80&w=400"
-                alt="Bali" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s ease;"
-                onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
-            <div
-                style="position: absolute; bottom: 0; left: 0; right: 0; padding: 2rem 1.5rem; background: linear-gradient(to top, rgba(0,0,0,0.8), transparent); color: white;">
-                <h3 style="margin: 0; font-size: 1.5rem;">Bali, Indonesia</h3>
-            </div>
-        </div>
-
-        <div style="position: relative; height: 300px; border-radius: 16px; overflow: hidden; cursor: pointer;"
-            onclick="document.getElementById('destination').value='New York'; document.getElementById('destination').scrollIntoView({behavior: 'smooth'});">
-            <img src="https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?auto=format&fit=crop&q=80&w=400"
-                alt="New York" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s ease;"
-                onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
-            <div
-                style="position: absolute; bottom: 0; left: 0; right: 0; padding: 2rem 1.5rem; background: linear-gradient(to top, rgba(0,0,0,0.8), transparent); color: white;">
-                <h3 style="margin: 0; font-size: 1.5rem;">New York, USA</h3>
-            </div>
-        </div>
-    </div>
-
-    <div class="text-center" style="margin-top: 3rem;">
-        <button class="btn btn-outline"
-            style="border: 1px solid var(--border-color); padding: 10px 24px; border-radius: 20px; background: transparent; cursor: pointer; font-family: inherit; font-size: 1rem; color: var(--text-color);">Load
-            more destinations</button>
     </div>
 </section>
+
 {% endblock %}
 
 {% block extra_scripts %}
 <style>
-    @keyframes spin {
-        to {
-            transform: rotate(360deg);
-        }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .spinner-sm {
+        display: inline-block; width: 24px; height: 24px;
+        border: 3px solid var(--border); border-top-color: var(--primary);
+        border-radius: 50%; animation: spin 0.8s linear infinite;
     }
-
     .spot-card {
-        background: var(--background, #f8f9f8);
-        border: 1px solid var(--border-color, #e5e5e5);
-        border-radius: 10px;
-        padding: 0.75rem 0.85rem;
+        background: var(--card-bg); border: 1px solid var(--border);
+        border-radius: 10px; padding: 0.75rem 0.85rem;
         transition: box-shadow 0.18s, transform 0.18s;
     }
-
-    .spot-card:hover {
-        box-shadow: 0 3px 12px rgba(0, 0, 0, 0.09);
-        transform: translateY(-2px);
-    }
-
-    .spot-card-name {
-        font-size: 0.84rem;
-        font-weight: 600;
-        color: var(--text-color, #222);
-        margin: 0 0 0.3rem 0;
-        line-height: 1.3;
-    }
-
-    .spot-card-type {
-        display: inline-block;
-        font-size: 0.7rem;
-        background: rgba(74, 124, 89, 0.1);
-        color: var(--primary-green, #4a7c59);
-        border-radius: 20px;
-        padding: 2px 8px;
-        font-weight: 500;
-    }
-
-    .spot-rating {
-        display: inline-block;
-        margin-left: 0.4rem;
-        font-size: 0.78rem;
-        color: #b8860b;
-        font-weight: 600;
-    }
-
-    .spot-card-map {
-        display: block;
-        margin-top: 0.4rem;
-        font-size: 0.72rem;
-        color: #aaa;
-        text-decoration: none;
-    }
-
-    .spot-card-map:hover {
-        color: var(--primary-green);
-    }
+    .spot-card:hover { box-shadow: 0 3px 12px rgba(0,0,0,0.09); transform: translateY(-2px); }
+    .spot-card-name { font-size: 0.84rem; font-weight: 600; color: var(--text); margin: 0 0 0.3rem 0; line-height: 1.3; }
+    .spot-card-type { display: inline-block; font-size: 0.7rem; background: rgba(74,124,89,0.1); color: var(--primary); border-radius: 20px; padding: 2px 8px; font-weight: 500; }
+    .spot-rating { display: inline-block; margin-left: 0.4rem; font-size: 0.78rem; color: #b8860b; font-weight: 600; }
+    .spot-card-map { display: block; margin-top: 0.4rem; font-size: 0.72rem; color: #aaa; text-decoration: none; }
+    .spot-card-map:hover { color: var(--primary); }
 </style>
 <script>
-    function increment(id) {
-        const input = document.getElementById(id);
-        if (input.value < input.max) input.value = parseInt(input.value) + 1;
-    }
-    function decrement(id) {
-        const input = document.getElementById(id);
-        if (input.value > input.min) input.value = parseInt(input.value) - 1;
-    }
+    // Increment/decrement
+    function increment(id) { const i = document.getElementById(id); if (i.value < i.max) i.value = parseInt(i.value) + 1; }
+    function decrement(id) { const i = document.getElementById(id); if (i.value > i.min) i.value = parseInt(i.value) - 1; }
 
-    // ---- Budget validation ----
-    function checkBudgetExceeded() {
-        const total = parseFloat(document.getElementById('budget_total').value) || 0;
-        const breakdown = ['budget_accommodation', 'budget_food', 'budget_activities', 'budget_transport'];
-        const sum = breakdown.reduce((s, id) => s + (parseFloat(document.getElementById(id).value) || 0), 0);
-        const warn = document.getElementById('budget-warning');
-        if (total > 0 && sum > 0 && sum > total) {
-            warn.style.display = 'block';
-            return true;
-        }
-        warn.style.display = 'none';
-        return false;
-    }
-    ['budget_total', 'budget_accommodation', 'budget_food', 'budget_activities', 'budget_transport'].forEach(id => {
-        const el = document.getElementById(id);
-        if (el) el.addEventListener('input', checkBudgetExceeded);
-    });
-    const tripForm = document.getElementById('budget_total')?.closest('form');
-    if (tripForm) tripForm.addEventListener('submit', function(e) {
-        if (checkBudgetExceeded()) {
-            if (!confirm('Your breakdown total exceeds your budget. Continue anyway?')) e.preventDefault();
-        }
-    });
+    // Destination autocomplete (popular suggestions)
+    const suggestions = ['Tokyo, Japan','Paris, France','Bali, Indonesia','Rome, Italy','New York, USA','Cebu, Philippines','Barcelona, Spain','Bangkok, Thailand','Sydney, Australia','Dubai, UAE','Singapore','London, UK','Amsterdam, Netherlands','Kyoto, Japan','Istanbul, Turkey'];
 
-    // ---- Spots panel ----
-    const spotsCache = {};
-    let pendingRequests = {};
-
-    function closeSpotsPanel() {
-        document.getElementById('spots-panel').style.display = 'none';
-    }
-
-    function renderSpotsGrid() {
-        const checkedBoxes = [...document.querySelectorAll('.interest-tag input[type="checkbox"]:checked')];
-        const destination = document.getElementById('destination').value.trim();
-        const grid = document.getElementById('spots-grid');
-        const panel = document.getElementById('spots-panel');
-        const title = document.getElementById('spots-panel-title');
-        const emptyMsg = document.getElementById('spots-empty');
-        const errorMsg = document.getElementById('spots-error');
-
-        let allSpots = [];
-        let categoryNames = [];
-
-        for (const box of checkedBoxes) {
-            const cat = box.value;
-            const key = destination + '|' + cat;
-            if (spotsCache[key] && spotsCache[key].length > 0) {
-                allSpots = allSpots.concat(spotsCache[key].map(s => ({ ...s, _cat: cat })));
-                categoryNames.push(cat);
-            }
-        }
-
-        grid.innerHTML = '';
-        emptyMsg.style.display = 'none';
-        errorMsg.style.display = 'none';
-
-        if (allSpots.length === 0 && categoryNames.length === 0) {
-            panel.style.display = 'none';
-            return;
-        }
-
-        panel.style.display = 'block';
-        title.textContent = destination
-            ? `📍 Spots in ${destination} · ${categoryNames.join(', ')}`
-            : '📍 Spots found';
-
-        if (allSpots.length === 0) {
-            emptyMsg.style.display = 'block';
-            return;
-        }
-
-        allSpots.forEach(spot => {
-            const card = document.createElement('div');
-            card.className = 'spot-card';
-            const mapLink = (spot.lat && spot.lon)
-                ? `<a class="spot-card-map" href="https://www.openstreetmap.org/?mlat=${spot.lat}&mlon=${spot.lon}#map=17/${spot.lat}/${spot.lon}" target="_blank">🗺️ View on map</a>`
-                : '';
-            const ratingHtml = spot.rating != null
-                ? `<span class="spot-rating">${spot.rating} ★</span>`
-                : '';
-            card.innerHTML = `<p class="spot-card-name">${spot.name}</p><span class="spot-card-type">${spot.type}</span>${ratingHtml}${mapLink}`;
-            grid.appendChild(card);
+    function setupAutocomplete(inputId, dropdownId) {
+        const input = document.getElementById(inputId);
+        const dropdown = document.getElementById(dropdownId);
+        if (!input || !dropdown) return;
+        input.addEventListener('input', function() {
+            const val = this.value.trim().toLowerCase();
+            dropdown.innerHTML = '';
+            if (!val) { dropdown.style.display = 'none'; return; }
+            const matches = suggestions.filter(s => s.toLowerCase().includes(val)).slice(0, 5);
+            if (!matches.length) { dropdown.style.display = 'none'; return; }
+            matches.forEach(m => {
+                const item = document.createElement('div');
+                item.className = 'autocomplete-item';
+                item.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:8px;flex-shrink:0;opacity:0.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>${m}`;
+                item.addEventListener('click', () => {
+                    input.value = m;
+                    dropdown.style.display = 'none';
+                    if (inputId === 'destination') { checkInterests(); }
+                });
+                dropdown.appendChild(item);
+            });
+            dropdown.style.display = 'block';
         });
+        document.addEventListener('click', e => { if (!input.contains(e.target)) dropdown.style.display = 'none'; });
+    }
+    setupAutocomplete('hero-destination', 'hero-autocomplete');
+    setupAutocomplete('destination', 'form-autocomplete');
+
+    function goToForm() {
+        const val = document.getElementById('hero-destination').value.trim();
+        if (val) document.getElementById('destination').value = val;
+        document.getElementById('create-trip').scrollIntoView({ behavior: 'smooth' });
     }
 
-    async function fetchSpotsForCategory(category, destination) {
-        const key = destination + '|' + category;
-        if (spotsCache[key] !== undefined || pendingRequests[key]) return;
-
-        pendingRequests[key] = true;
-        const loading = document.getElementById('spots-loading');
-        loading.style.display = 'block';
-        document.getElementById('spots-panel').style.display = 'block';
-
-        try {
-            const url = `/api/spots/?destination=${encodeURIComponent(destination)}&category=${encodeURIComponent(category)}`;
-            const resp = await fetch(url);
-            const data = await resp.json();
-            if (data.error) {
-                document.getElementById('spots-error').textContent = 'Error: ' + data.error;
-                document.getElementById('spots-error').style.display = 'block';
-                spotsCache[key] = [];
-            } else {
-                spotsCache[key] = data.spots || [];
-            }
-        } catch (e) {
-            document.getElementById('spots-error').textContent = 'Could not load spots. Check your connection.';
-            document.getElementById('spots-error').style.display = 'block';
-            spotsCache[key] = [];
-        } finally {
-            delete pendingRequests[key];
-            loading.style.display = 'none';
-            renderSpotsGrid();
-        }
+    function setDestination(dest) {
+        document.getElementById('destination').value = dest;
+        document.getElementById('create-trip').scrollIntoView({ behavior: 'smooth' });
     }
 
-    // ---- Interest checkbox logic ----
+    // Interest counter
     const checkboxes = document.querySelectorAll('.interest-tag input[type="checkbox"]');
+    const counter = document.getElementById('interest-counter');
     const limit = 5;
-
     checkboxes.forEach(box => {
-        box.addEventListener('change', function () {
-            const checkedCount = document.querySelectorAll('.interest-tag input[type="checkbox"]:checked').length;
-            if (checkedCount > limit) {
-                this.checked = false;
-                return;
-            }
-            const destination = document.getElementById('destination').value.trim();
-            const category = this.value;
-
+        box.addEventListener('change', function() {
+            const checked = document.querySelectorAll('.interest-tag input:checked').length;
+            if (checked > limit) { this.checked = false; return; }
+            counter.textContent = `${Math.min(checked, limit)} / 5 selected`;
+            const dest = document.getElementById('destination').value.trim();
             if (this.checked) {
-                if (!destination) {
+                if (!dest) {
                     let hint = document.getElementById('dest-hint');
                     if (!hint) {
                         hint = document.createElement('p');
                         hint.id = 'dest-hint';
-                        hint.style.cssText = 'color:#e05555;font-size:0.78rem;margin-top:0.4rem;';
+                        hint.className = 'alert-warning';
+                        hint.style.marginTop = '0.4rem';
                         document.getElementById('destination').parentNode.appendChild(hint);
                     }
                     hint.textContent = '⚠️ Please enter a destination first to see spots.';
@@ -696,12 +425,77 @@
                     this.checked = false;
                     return;
                 }
-                fetchSpotsForCategory(category, destination);
+                fetchSpotsForCategory(this.value, dest);
             } else {
-                delete spotsCache[destination + '|' + category];
+                delete spotsCache[dest + '|' + this.value];
                 renderSpotsGrid();
             }
         });
     });
+
+    function checkInterests() {}
+
+    // Budget validation
+    function checkBudgetExceeded() {
+        const total = parseFloat(document.getElementById('budget_total').value) || 0;
+        const sum = ['budget_accommodation','budget_food','budget_activities','budget_transport']
+            .reduce((s, id) => s + (parseFloat(document.getElementById(id).value) || 0), 0);
+        const warn = document.getElementById('budget-warning');
+        if (total > 0 && sum > 0 && sum > total) { warn.style.display = 'block'; return true; }
+        warn.style.display = 'none'; return false;
+    }
+    ['budget_total','budget_accommodation','budget_food','budget_activities','budget_transport'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.addEventListener('input', checkBudgetExceeded);
+    });
+    const tripForm = document.getElementById('budget_total')?.closest('form');
+    if (tripForm) tripForm.addEventListener('submit', function(e) {
+        if (checkBudgetExceeded()) { if (!confirm('Breakdown exceeds budget. Continue anyway?')) e.preventDefault(); }
+    });
+
+    // Spots panel
+    const spotsCache = {};
+    let pendingRequests = {};
+    function closeSpotsPanel() { document.getElementById('spots-panel').style.display = 'none'; }
+    function renderSpotsGrid() {
+        const checked = [...document.querySelectorAll('.interest-tag input:checked')];
+        const dest = document.getElementById('destination').value.trim();
+        const grid = document.getElementById('spots-grid');
+        const panel = document.getElementById('spots-panel');
+        let allSpots = [], cats = [];
+        for (const box of checked) {
+            const key = dest + '|' + box.value;
+            if (spotsCache[key]?.length) { allSpots = allSpots.concat(spotsCache[key].map(s => ({...s, _cat: box.value}))); cats.push(box.value); }
+        }
+        grid.innerHTML = '';
+        document.getElementById('spots-empty').style.display = 'none';
+        document.getElementById('spots-error').style.display = 'none';
+        if (!allSpots.length && !cats.length) { panel.style.display = 'none'; return; }
+        panel.style.display = 'block';
+        document.getElementById('spots-panel-title').textContent = dest ? `📍 Spots in ${dest} · ${cats.join(', ')}` : '📍 Spots found';
+        if (!allSpots.length) { document.getElementById('spots-empty').style.display = 'block'; return; }
+        allSpots.forEach(spot => {
+            const card = document.createElement('div');
+            card.className = 'spot-card';
+            const mapLink = spot.lat && spot.lon ? `<a class="spot-card-map" href="https://www.openstreetmap.org/?mlat=${spot.lat}&mlon=${spot.lon}#map=17/${spot.lat}/${spot.lon}" target="_blank">🗺️ View on map</a>` : '';
+            const rating = spot.rating != null ? `<span class="spot-rating">${spot.rating} ★</span>` : '';
+            card.innerHTML = `<p class="spot-card-name">${spot.name}</p><span class="spot-card-type">${spot.type}</span>${rating}${mapLink}`;
+            grid.appendChild(card);
+        });
+    }
+    async function fetchSpotsForCategory(category, destination) {
+        const key = destination + '|' + category;
+        if (spotsCache[key] !== undefined || pendingRequests[key]) return;
+        pendingRequests[key] = true;
+        document.getElementById('spots-loading').style.display = 'block';
+        document.getElementById('spots-panel').style.display = 'block';
+        try {
+            const resp = await fetch(`/api/spots/?destination=${encodeURIComponent(destination)}&category=${encodeURIComponent(category)}`);
+            const data = await resp.json();
+            if (data.error) { document.getElementById('spots-error').textContent = 'Error: ' + data.error; document.getElementById('spots-error').style.display = 'block'; spotsCache[key] = []; }
+            else { spotsCache[key] = data.spots || []; }
+        } catch(e) { document.getElementById('spots-error').textContent = 'Could not load spots.'; document.getElementById('spots-error').style.display = 'block'; spotsCache[key] = []; }
+        finally { delete pendingRequests[key]; document.getElementById('spots-loading').style.display = 'none'; renderSpotsGrid(); }
+    }
 </script>
 {% endblock %}

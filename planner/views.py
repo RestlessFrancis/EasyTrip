@@ -4,21 +4,23 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.db import IntegrityError
 from django.http import JsonResponse
+from django.conf import settings
 from .models import Trip, ItineraryDay
 import datetime
+import json
 import random
 from decimal import Decimal, InvalidOperation
 import requests
 import urllib.parse
+import google.generativeai as genai
+from groq import Groq
 
 
 def _spot_rating(name):
-    """Generate a deterministic rating (3.5–5.0) from spot name for display. OSM has no ratings."""
     h = sum(ord(c) for c in (name or '')) % 100
     return round(3.5 + (h / 100) * 1.5, 1)
 
 
-# Maps interest category names to Overpass API query filters
 CATEGORY_OVERPASS_FILTERS = {
     'Nature': [
         'node["leisure"="nature_reserve"]',
@@ -86,11 +88,8 @@ CATEGORY_OVERPASS_FILTERS = {
     ],
 }
 
+
 def spots_by_category(request):
-    """
-    GET /api/spots/?destination=Cebu City&category=Nature
-    Returns a list of real POI spots from OpenStreetMap via Overpass API.
-    """
     destination = request.GET.get('destination', '').strip()
     category = request.GET.get('category', '').strip()
 
@@ -103,7 +102,6 @@ def spots_by_category(request):
 
     headers = {'User-Agent': 'EasytripApp/1.0'}
 
-    # Step 1: Geocode destination to get bounding box
     try:
         geocode_url = f"https://nominatim.openstreetmap.org/search?q={urllib.parse.quote(destination)}&format=json&limit=1"
         geo_resp = requests.get(geocode_url, headers=headers, timeout=6)
@@ -111,7 +109,7 @@ def spots_by_category(request):
         if not geo_data:
             return JsonResponse({'spots': [], 'message': 'Destination not found'})
         place = geo_data[0]
-        bbox = place.get('boundingbox')  # [south, north, west, east]
+        bbox = place.get('boundingbox')
         if not bbox:
             lat = float(place['lat'])
             lon = float(place['lon'])
@@ -122,7 +120,6 @@ def spots_by_category(request):
     except Exception as e:
         return JsonResponse({'error': f'Geocoding failed: {str(e)}'}, status=500)
 
-    # Step 2: Build and run Overpass query
     try:
         union_parts = '\n'.join([f'  {f}({bbox_str});' for f in filters])
         overpass_query = f"""
@@ -139,7 +136,6 @@ out body 30;
     except Exception as e:
         return JsonResponse({'error': f'Overpass query failed: {str(e)}'}, status=500)
 
-    # Step 3: Parse results into clean spot list
     spots = []
     seen_names = set()
     for el in elements:
@@ -179,7 +175,6 @@ def home(request):
         budget_total = request.POST.get('budget_total', '').strip()
         budget_currency = request.POST.get('budget_currency', 'USD').strip()
 
-        # Convert dates if present
         def parse_date(date_str):
             if date_str:
                 try:
@@ -191,13 +186,11 @@ def home(request):
         s_date = parse_date(start_date)
         e_date = parse_date(end_date)
 
-        # Setup defaults
         lat = 0.0
         lon = 0.0
         image_url = ''
         search_query = destination
 
-        # 1. Fetch overview from Wikipedia API (also gives us spell-corrected titles and fallback coordinates)
         overview_text = f"Get ready for an amazing adventure in {destination}. This itinerary is tailored to your interests: {', '.join(interests) if interests else 'everything'}."
         try:
             clean_destination = urllib.parse.quote(destination)
@@ -213,7 +206,6 @@ def home(request):
                 if 'coordinates' in wiki_data:
                     lat = wiki_data['coordinates']['lat']
                     lon = wiki_data['coordinates']['lon']
-                # Extract image from Wikipedia response
                 if 'originalimage' in wiki_data:
                     image_url = wiki_data['originalimage']['source']
                 elif 'thumbnail' in wiki_data:
@@ -221,9 +213,8 @@ def home(request):
         except Exception as e:
             print(f"Error fetching Wikipedia summary for {destination}: {e}")
 
-        # Fallback image if Wikipedia had none
         if not image_url:
-            image_url = f"https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?auto=format&fit=crop&q=80&w=1200"
+            image_url = "https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?auto=format&fit=crop&q=80&w=1200"
 
         try:
             headers = {'User-Agent': 'EasytripApp/1.0'}
@@ -237,8 +228,6 @@ def home(request):
         except Exception as e:
             print(f"Error geocoding {search_query}: {e}")
 
-
-        # Parse budget
         bt = None
         if budget_total:
             try:
@@ -271,33 +260,22 @@ def home(request):
             latitude=lat,
             longitude=lon
         )
-        
-        # Create dummy itinerary days
-        for i in range(1, int(trip_length) + 1):
-             ItineraryDay.objects.create(
-                 trip=trip,
-                 day_number=i,
-                 description=f"Day {i} in {destination}. Explore the top sights and enjoy local cuisine."
-             )
 
         return redirect('trip_detail', trip_id=trip.id)
 
-    # Get recent trips for the grid
     if request.user.is_authenticated:
         recent_trips = Trip.objects.filter(user=request.user).order_by('-created_at')[:4]
     else:
         recent_trips = Trip.objects.none()
-    
-    context = {
-        'recent_trips': recent_trips
-    }
+
+    context = {'recent_trips': recent_trips}
     return render(request, 'home.html', context)
+
 
 def trip_detail(request, trip_id):
     trip = get_object_or_404(Trip, id=trip_id)
     days = trip.days.all()
 
-    # Fetch recommended spots for each interest category
     recommended_spots = []
     if trip.interests and trip.destination:
         headers = {'User-Agent': 'EasytripApp/1.0'}
@@ -356,7 +334,6 @@ def trip_detail(request, trip_id):
         except Exception:
             pass
 
-    # Check if budget breakdown exceeds total
     breakdown_total = 0
     budget_exceeded = False
     if trip.budget_total and trip.budget_breakdown:
@@ -366,9 +343,19 @@ def trip_detail(request, trip_id):
         )
         budget_exceeded = breakdown_total > float(trip.budget_total)
 
+    # Parse stored itinerary day JSON for template rendering
+    parsed_days = []
+    for day in days:
+        try:
+            parsed_days.append(json.loads(day.description))
+        except (json.JSONDecodeError, TypeError):
+            parsed_days.append(None)
+
     context = {
         'trip': trip,
         'days': days,
+        'parsed_days': parsed_days,
+        'has_generated': any(d is not None for d in parsed_days),
         'recommended_spots': recommended_spots,
         'budget_exceeded': budget_exceeded,
         'breakdown_total': breakdown_total,
@@ -376,19 +363,96 @@ def trip_detail(request, trip_id):
     return render(request, 'detail.html', context)
 
 
+def generate_itinerary(request, trip_id):
+    if request.method != 'POST':
+        return JsonResponse({'error': 'POST required'}, status=405)
+
+    trip = get_object_or_404(Trip, id=trip_id)
+
+    interests_str = ', '.join(trip.interests) if trip.interests else 'general sightseeing'
+    budget_str = f"{trip.budget_currency} {trip.budget_total}" if trip.budget_total else 'unspecified'
+    group_str = trip.group_size if trip.group_size else 'a small group'
+
+    prompt = f"""You are an expert travel planner. Generate a detailed {trip.trip_length}-day itinerary for a trip to {trip.destination}.
+
+Trip details:
+- Group: {group_str}
+- Interests: {interests_str}
+- Total Budget: {budget_str}
+- Dates: {trip.start_date} to {trip.end_date}
+
+Return ONLY a valid JSON array (no markdown, no explanation) with exactly {trip.trip_length} objects, one per day:
+[
+  {{
+    "day": 1,
+    "theme": "Short catchy theme for the day",
+    "morning": {{
+      "activity": "Activity name",
+      "description": "2-3 sentence description with practical details.",
+      "duration": "e.g. 2-3 hours",
+      "cost": "e.g. Free / $10 per person"
+    }},
+    "afternoon": {{
+      "activity": "Activity name",
+      "description": "2-3 sentence description.",
+      "duration": "e.g. 3 hours",
+      "cost": "e.g. $15 per person"
+    }},
+    "evening": {{
+      "activity": "Activity name",
+      "description": "2-3 sentence description.",
+      "duration": "e.g. 2 hours",
+      "cost": "e.g. $20-30 per person"
+    }},
+    "estimated_daily_cost": "e.g. $50-80 per person",
+    "local_tip": "One practical insider tip for this day."
+  }}
+]"""
+
+    try:
+        client = Groq(api_key=settings.GROQ_API_KEY)
+        completion = client.chat.completions.create(
+            model="llama-3.3-70b-versatile",
+            messages=[{"role": "user", "content": prompt}],
+            max_tokens=4000,
+            temperature=0.7,
+        )
+        raw_text = completion.choices[0].message.content.strip()
+
+        # Strip markdown code fences if present
+        if raw_text.startswith("```"):
+            raw_text = raw_text.split("```")[1]
+            if raw_text.startswith("json"):
+                raw_text = raw_text[4:]
+        raw_text = raw_text.strip()
+
+        days_data = json.loads(raw_text)
+
+        trip.days.all().delete()
+        for day in days_data:
+            ItineraryDay.objects.create(
+                trip=trip,
+                day_number=day['day'],
+                description=json.dumps(day)
+            )
+
+        return JsonResponse({'success': True, 'days': days_data})
+
+    except json.JSONDecodeError as e:
+        return JsonResponse({'error': f'Failed to parse AI response: {str(e)}'}, status=500)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+
+
 def dashboard(request):
     if request.user.is_authenticated:
         trips = Trip.objects.filter(user=request.user).order_by('-created_at')
     else:
         trips = Trip.objects.none()
-    
-    context = {
-        'trips': trips
-    }
-    return render(request, 'dashboard.html', context)
+    return render(request, 'dashboard.html', {'trips': trips})
+
 
 def delete_trip(request, trip_id):
-    # Allow GET for simpler frontend integration bypassing form submission issues
     trip = get_object_or_404(Trip, id=trip_id)
     if trip.user == request.user or trip.user is None:
         trip.delete()
@@ -422,23 +486,21 @@ def logout_view(request):
 def signup_view(request):
     if request.user.is_authenticated:
         return redirect('home')
-    
     if request.method == 'POST':
         username = request.POST.get('username', '')
         email = request.POST.get('email', '')
         password = request.POST.get('password', '')
         confirm_password = request.POST.get('confirm_password', '')
-        
+
         if password != confirm_password:
             return render(request, 'signup.html', {
                 'error': 'Passwords do not match.',
                 'username': username,
                 'email': email,
             })
-            
         try:
             user = User.objects.create_user(username=username, email=email, password=password)
-            login(request, user)  # Log the user in immediately after signup
+            login(request, user)
             return redirect('home')
         except IntegrityError:
             return render(request, 'signup.html', {
@@ -446,5 +508,4 @@ def signup_view(request):
                 'username': username,
                 'email': email,
             })
-            
     return render(request, 'signup.html')
