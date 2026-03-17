@@ -4,21 +4,16 @@ Django settings for easytrip project.
 
 from pathlib import Path
 import os
+import dj_database_url
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-79p58w0l&uqp&u9^te_n3zxnick#r^%7=_qo-ic8l-e++io@#d'
+# Secret key — from environment in production
+SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-79p58w0l&uqp&u9^te_n3zxnick#r^%7=_qo-ic8l-e++io@#d')
 
-# Groq API Key
-GROQ_API_KEY = 'your-groq-api-key-here'
-
-# Mapbox Token
-MAPBOX_TOKEN = 'your-mapbox-token-here'
-
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# Debug — always False in production
+DEBUG = os.environ.get('DEBUG', 'True') == 'True'
 
 ALLOWED_HOSTS = [
     '127.0.0.1',
@@ -26,6 +21,15 @@ ALLOWED_HOSTS = [
     '.onrender.com',
     'easytrip-66z0.onrender.com',
 ]
+
+RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
+if RENDER_EXTERNAL_HOSTNAME:
+    ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
+
+# API Keys
+GROQ_API_KEY = os.environ.get('GROQ_API_KEY', '')
+MAPBOX_TOKEN = os.environ.get('MAPBOX_TOKEN', '')
+SITE_URL = os.environ.get('SITE_URL', 'http://127.0.0.1:8000')
 
 # Application definition
 INSTALLED_APPS = [
@@ -68,11 +72,16 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'easytrip.wsgi.application'
 
-
-# Database
-if os.environ.get('DATABASE_URL'):
-    import dj_database_url
-    DATABASES = {'default': dj_database_url.config(conn_max_age=600)}
+# Database — PostgreSQL in production, SQLite locally
+DATABASE_URL = os.environ.get('DATABASE_URL')
+if DATABASE_URL:
+    DATABASES = {
+        'default': dj_database_url.config(
+            default=DATABASE_URL,
+            conn_max_age=600,
+            conn_health_checks=True,
+        )
+    }
 else:
     DATABASES = {
         'default': {
@@ -80,7 +89,6 @@ else:
             'NAME': BASE_DIR / 'db.sqlite3',
         }
     }
-
 
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
@@ -90,34 +98,27 @@ AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
 ]
 
-
 # Internationalization
 LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'UTC'
 USE_I18N = True
 USE_TZ = True
 
-
-# Static files
-STATIC_URL = 'static/'
+# Static files — WhiteNoise serves them in production
+STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATICFILES_DIRS = [BASE_DIR / 'static']
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
 # Authentication
 LOGIN_URL = '/login/'
 LOGIN_REDIRECT_URL = '/'
 
-# Site URL (change to your real domain when deploying)
-SITE_URL = 'http://127.0.0.1:8000'
-
-# Site URL (change to your real domain when deploying)
-SITE_URL = 'http://127.0.0.1:8000'
-
-# ---- Email (Gmail SMTP) ----
+# Email (Gmail SMTP)
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'your-app-gmail@gmail.com'       # replace with your Gmail
-EMAIL_HOST_PASSWORD = 'your-16-char-app-password'  # replace with Gmail App Password
-DEFAULT_FROM_EMAIL = 'Easytrip ✈️ <your-app-gmail@gmail.com>'
+EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', '')
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', '')
+DEFAULT_FROM_EMAIL = f'Easytrip ✈️ <{os.environ.get("EMAIL_HOST_USER", "")}>'
