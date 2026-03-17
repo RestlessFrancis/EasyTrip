@@ -20,8 +20,12 @@ MAPBOX_TOKEN = 'your-mapbox-token-here'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
-
+ALLOWED_HOSTS = [
+    '127.0.0.1',
+    'localhost',
+    '.onrender.com',
+    'easytrip-66z0.onrender.com',
+]
 
 # Application definition
 INSTALLED_APPS = [
