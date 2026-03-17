@@ -256,7 +256,8 @@ def home(request):
             print(f"Error fetching Wikipedia summary for {destination}: {e}")
 
         if not image_url or any(kw in image_url.lower() for kw in ['map', 'flag', 'coat', 'locator', 'blank', 'svg']):
-            image_url = f"https://source.unsplash.com/800x600/?{urllib.parse.quote(destination)},travel,landscape"
+            # Use a reliable direct Unsplash image (no redirect)
+            image_url = f"https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?auto=format&fit=crop&q=80&w=800"
 
         try:
             headers = {'User-Agent': 'EasytripApp/1.0'}
@@ -448,21 +449,56 @@ Return ONLY a valid JSON array (no markdown, no explanation) with exactly {trip.
       "activity": "Activity name",
       "description": "2-3 sentence description with practical details.",
       "duration": "e.g. 2-3 hours",
-      "cost": "e.g. Free / $10 per person"
+      "cost": "e.g. Free / $10 per person",
+      "transport": {{
+        "mode": "e.g. Bus / MRT / Walk / Taxi / Grab",
+        "description": "Brief directions to get there",
+        "cost": "e.g. $1.50 per person"
+      }},
+      "food": {{
+        "recommendation": "Name of a specific nearby restaurant or food spot",
+        "cuisine": "e.g. Local street food / Japanese / Italian",
+        "estimated_cost": "e.g. $8-15 per person",
+        "must_try": "One specific dish to try"
+      }}
     }},
     "afternoon": {{
       "activity": "Activity name",
       "description": "2-3 sentence description.",
       "duration": "e.g. 3 hours",
-      "cost": "e.g. $15 per person"
+      "cost": "e.g. $15 per person",
+      "transport": {{
+        "mode": "e.g. Bus / MRT / Walk / Taxi",
+        "description": "Brief directions to get there",
+        "cost": "e.g. $2 per person"
+      }},
+      "food": {{
+        "recommendation": "Name of a specific nearby restaurant or food spot",
+        "cuisine": "e.g. Local / Fast food / Fine dining",
+        "estimated_cost": "e.g. $10-20 per person",
+        "must_try": "One specific dish to try"
+      }}
     }},
     "evening": {{
       "activity": "Activity name",
       "description": "2-3 sentence description.",
       "duration": "e.g. 2 hours",
-      "cost": "e.g. $20-30 per person"
+      "cost": "e.g. $20-30 per person",
+      "transport": {{
+        "mode": "e.g. Taxi / Grab / Walk",
+        "description": "Brief directions to get there",
+        "cost": "e.g. $5 per person"
+      }},
+      "food": {{
+        "recommendation": "Name of a specific restaurant for dinner",
+        "cuisine": "e.g. Local / Seafood / International",
+        "estimated_cost": "e.g. $15-25 per person",
+        "must_try": "One specific dish to try"
+      }}
     }},
-    "estimated_daily_cost": "e.g. $50-80 per person",
+    "estimated_daily_cost": "e.g. $50-80 per person (including transport & food)",
+    "total_transport_cost": "e.g. $10-15 per person",
+    "total_food_cost": "e.g. $25-40 per person",
     "local_tip": "One practical insider tip for this day."
   }}
 ]"""
@@ -472,7 +508,7 @@ Return ONLY a valid JSON array (no markdown, no explanation) with exactly {trip.
         completion = client.chat.completions.create(
             model="llama-3.3-70b-versatile",
             messages=[{"role": "user", "content": prompt}],
-            max_tokens=4000,
+            max_tokens=6000,
             temperature=0.7,
         )
         raw_text = completion.choices[0].message.content.strip()
