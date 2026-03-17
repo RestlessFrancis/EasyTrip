@@ -1,1 +1,1 @@
-web: gunicorn easytrip.wsgi:application
+web: gunicorn easytrip.wsgi:application --config gunicorn.conf.py
