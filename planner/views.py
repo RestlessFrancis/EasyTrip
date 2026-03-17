@@ -256,8 +256,11 @@ def home(request):
             print(f"Error fetching Wikipedia summary for {destination}: {e}")
 
         if not image_url or any(kw in image_url.lower() for kw in ['map', 'flag', 'coat', 'locator', 'blank', 'svg']):
-            # Use a reliable direct Unsplash image (no redirect)
-            image_url = f"https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?auto=format&fit=crop&q=80&w=800"
+            mapbox_token = getattr(settings, 'MAPBOX_TOKEN', '')
+            if lat and lon and lat != 0.0 and lon != 0.0 and mapbox_token:
+                image_url = f"https://api.mapbox.com/styles/v1/mapbox/outdoors-v12/static/{lon},{lat},10,0/800x400@2x?access_token={mapbox_token}"
+            else:
+                image_url = "https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?auto=format&fit=crop&q=80&w=800"
 
         try:
             headers = {'User-Agent': 'EasytripApp/1.0'}
