@@ -216,8 +216,10 @@ def home(request):
         except Exception as e:
             print(f"Error fetching Wikipedia summary for {destination}: {e}")
 
-        if not image_url:
-            image_url = "https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?auto=format&fit=crop&q=80&w=1200"
+        # Use Wikipedia image only if it looks like a photo, not a map
+        # Always fall back to Unsplash with destination name for scenic photos
+        if not image_url or any(kw in image_url.lower() for kw in ['map', 'flag', 'coat', 'locator', 'blank', 'svg']):
+            image_url = f"https://source.unsplash.com/800x600/?{urllib.parse.quote(destination)},travel,landscape"
 
         try:
             headers = {'User-Agent': 'EasytripApp/1.0'}
@@ -264,29 +266,21 @@ def home(request):
             longitude=lon
         )
 
-        # Send confirmation email if user is logged in and has an email
+        # Send confirmation email
         if request.user.is_authenticated and request.user.email:
-            print(f"[EMAIL] Attempting to send to: {request.user.email}")
             try:
                 html_message = render_to_string('emails/trip_created.html', {
                     'user': request.user,
                     'trip': trip,
                     'site_url': settings.SITE_URL,
                 })
-                plain_message = strip_tags(html_message)
-                send_mail(
+                send_email(
                     subject=f'✈️ Your Easytrip itinerary for {trip.destination} is ready!',
-                    message=plain_message,
-                    from_email=settings.DEFAULT_FROM_EMAIL,
-                    recipient_list=[request.user.email],
-                    html_message=html_message,
-                    fail_silently=False,  # show errors now
+                    to_email=request.user.email,
+                    html_content=html_message,
                 )
-                print(f"[EMAIL] Successfully sent to {request.user.email}")
             except Exception as e:
                 print(f"[EMAIL ERROR] {e}")
-        else:
-            print(f"[EMAIL] Skipped — authenticated: {request.user.is_authenticated}, email: '{getattr(request.user, 'email', None)}'")
 
         return redirect('trip_detail', trip_id=trip.id)
 
@@ -647,13 +641,10 @@ def send_magic_link(request):
                 'magic_url': magic_url,
                 'site_url': settings.SITE_URL,
             })
-            send_mail(
+            send_email(
                 subject='🔐 Your Easytrip login link',
-                message=f'Click here to log in: {magic_url}',
-                from_email=settings.DEFAULT_FROM_EMAIL,
-                recipient_list=[user.email],
-                html_message=html_message,
-                fail_silently=True,
+                to_email=user.email,
+                html_content=html_message,
             )
         except Exception as e:
             print(f"[MAGIC LINK ERROR] {e}")
