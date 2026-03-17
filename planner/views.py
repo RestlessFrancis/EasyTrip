@@ -6,19 +6,59 @@ from django.db import IntegrityError
 from django.http import JsonResponse
 from django.conf import settings
 from django.core.mail import send_mail
+from django.core.cache import cache
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
-from .models import Trip, ItineraryDay
+from .models import Trip, ItineraryDay, LoginToken
 import datetime
 import json
 import random
 from decimal import Decimal, InvalidOperation
 import requests
 import urllib.parse
-import google.generativeai as genai
 from groq import Groq
 
+# ---- Login attempt constants ----
+MAX_ATTEMPTS = 5
+LOCKOUT_SECONDS = 300  # 5 minutes
 
+
+# ---- Email helper ----
+def send_email(subject, to_email, html_content):
+    """Send email using Resend in production or Gmail SMTP locally."""
+    resend_key = getattr(settings, 'RESEND_API_KEY', '')
+    from_email = getattr(settings, 'DEFAULT_FROM_EMAIL', 'Easytrip <onboarding@resend.dev>')
+
+    if resend_key:
+        try:
+            import resend
+            resend.api_key = resend_key
+            resend.Emails.send({
+                "from": from_email,
+                "to": [to_email],
+                "subject": subject,
+                "html": html_content,
+            })
+            print(f"[EMAIL] Sent via Resend to {to_email}")
+        except Exception as e:
+            print(f"[EMAIL ERROR] Resend failed: {e}")
+    else:
+        try:
+            plain = strip_tags(html_content)
+            send_mail(
+                subject=subject,
+                message=plain,
+                from_email=from_email,
+                recipient_list=[to_email],
+                html_message=html_content,
+                fail_silently=False,
+            )
+            print(f"[EMAIL] Sent via Gmail SMTP to {to_email}")
+        except Exception as e:
+            print(f"[EMAIL ERROR] Gmail SMTP failed: {e}")
+
+
+# ---- Spot rating helper ----
 def _spot_rating(name):
     h = sum(ord(c) for c in (name or '')) % 100
     return round(3.5 + (h / 100) * 1.5, 1)
@@ -153,7 +193,6 @@ out body 30;
             tags.get('historic') or tags.get('shop') or
             tags.get('sport') or 'place'
         ).replace('_', ' ').title()
-
         spots.append({
             'name': name,
             'type': spot_type,
@@ -216,8 +255,6 @@ def home(request):
         except Exception as e:
             print(f"Error fetching Wikipedia summary for {destination}: {e}")
 
-        # Use Wikipedia image only if it looks like a photo, not a map
-        # Always fall back to Unsplash with destination name for scenic photos
         if not image_url or any(kw in image_url.lower() for kw in ['map', 'flag', 'coat', 'locator', 'blank', 'svg']):
             image_url = f"https://source.unsplash.com/800x600/?{urllib.parse.quote(destination)},travel,landscape"
 
@@ -364,7 +401,6 @@ def trip_detail(request, trip_id):
         )
         budget_exceeded = breakdown_total > float(trip.budget_total)
 
-    # Parse stored itinerary day JSON for template rendering
     parsed_days = []
     for day in days:
         try:
@@ -441,7 +477,6 @@ Return ONLY a valid JSON array (no markdown, no explanation) with exactly {trip.
         )
         raw_text = completion.choices[0].message.content.strip()
 
-        # Strip markdown code fences if present
         if raw_text.startswith("```"):
             raw_text = raw_text.split("```")[1]
             if raw_text.startswith("json"):
@@ -467,11 +502,10 @@ Return ONLY a valid JSON array (no markdown, no explanation) with exactly {trip.
 
 
 def monitor_dashboard(request):
-    """Staff-only monitoring dashboard."""
     if not request.user.is_authenticated or not request.user.is_staff:
         return redirect('login')
 
-    # ---- Stats ----
+    from django.db.models import Count, Max
     total_users = User.objects.count()
     total_trips = Trip.objects.count()
     today = timezone.now().date()
@@ -480,25 +514,20 @@ def monitor_dashboard(request):
         created_at__date__gte=today - datetime.timedelta(days=7)
     ).count()
 
-    # ---- User list with trip counts ----
-    from django.db.models import Count, Max
     users = User.objects.annotate(
         trip_count=Count('trip'),
         last_trip=Max('trip__created_at')
     ).order_by('-date_joined')
 
-    # ---- Trip list ----
     search_q = request.GET.get('q', '').strip()
     trips = Trip.objects.select_related('user').order_by('-created_at')
     if search_q:
         trips = trips.filter(destination__icontains=search_q) | \
                 Trip.objects.filter(user__username__icontains=search_q).order_by('-created_at')
 
-    # ---- Most popular destinations ----
-    from django.db.models import Count as DCount
     popular_destinations = (
         Trip.objects.values('destination')
-        .annotate(count=DCount('destination'))
+        .annotate(count=Count('destination'))
         .order_by('-count')[:10]
     )
 
@@ -508,7 +537,7 @@ def monitor_dashboard(request):
         'trips_today': trips_today,
         'trips_this_week': trips_this_week,
         'users': users,
-        'trips': trips[:50],  # latest 50
+        'trips': trips[:50],
         'popular_destinations': popular_destinations,
         'search_q': search_q,
     }
@@ -516,13 +545,10 @@ def monitor_dashboard(request):
 
 
 def monitor_user_detail(request, user_id):
-    """Staff-only: view a specific user's trips."""
     if not request.user.is_authenticated or not request.user.is_staff:
         return redirect('login')
-
     profile_user = get_object_or_404(User, id=user_id)
     trips = Trip.objects.filter(user=profile_user).order_by('-created_at')
-
     context = {
         'profile_user': profile_user,
         'trips': trips,
@@ -532,11 +558,6 @@ def monitor_user_detail(request, user_id):
 
 
 def dashboard(request):
-    if request.user.is_authenticated:
-        trips = Trip.objects.filter(user=request.user).order_by('-created_at')
-    else:
-        trips = Trip.objects.none()
-    return render(request, 'dashboard.html', {'trips': trips})
     if request.user.is_authenticated:
         trips = Trip.objects.filter(user=request.user).order_by('-created_at')
     else:
@@ -559,7 +580,6 @@ def login_view(request):
         username = request.POST.get('username', '').strip()
         password = request.POST.get('password', '')
 
-        # Check if account is locked
         lock_key = f'login_lock_{username}'
         attempt_key = f'login_attempts_{username}'
         locked_until = cache.get(lock_key)
@@ -567,7 +587,7 @@ def login_view(request):
         if locked_until:
             remaining = int((locked_until - timezone.now()).total_seconds())
             return render(request, 'login.html', {
-                'error': f'Too many failed attempts.',
+                'error': 'Too many failed attempts.',
                 'locked': True,
                 'remaining': max(remaining, 0),
                 'username': username,
@@ -576,20 +596,16 @@ def login_view(request):
         user = authenticate(request, username=username, password=password)
 
         if user is not None:
-            # Successful login — clear attempts
             cache.delete(attempt_key)
             cache.delete(lock_key)
             login(request, user)
             return redirect(request.GET.get('next', 'home'))
         else:
-            # Failed attempt — increment counter
             attempts = cache.get(attempt_key, 0) + 1
             cache.set(attempt_key, attempts, LOCKOUT_SECONDS * 2)
-
             remaining_attempts = MAX_ATTEMPTS - attempts
 
             if attempts >= MAX_ATTEMPTS:
-                # Lock the account
                 locked_until = timezone.now() + datetime.timedelta(seconds=LOCKOUT_SECONDS)
                 cache.set(lock_key, locked_until, LOCKOUT_SECONDS)
                 cache.delete(attempt_key)
@@ -610,13 +626,11 @@ def login_view(request):
 
 
 def send_magic_link(request):
-    """Send a one-time magic login link to the user's email."""
     if request.method != 'POST':
         return redirect('login')
 
     username = request.POST.get('username', '').strip()
 
-    # Try to find user by username or email
     user = None
     try:
         user = User.objects.get(username=username)
@@ -626,12 +640,8 @@ def send_magic_link(request):
         except User.DoesNotExist:
             pass
 
-    # Always show success message to prevent user enumeration
     if user and user.email:
-        # Invalidate old tokens for this user
         LoginToken.objects.filter(user=user, used=False).update(used=True)
-
-        # Create new token
         token = LoginToken.objects.create(user=user)
         magic_url = f"{settings.SITE_URL}/magic-link/verify/{token.token}/"
 
@@ -656,7 +666,6 @@ def send_magic_link(request):
 
 
 def verify_magic_link(request, token):
-    """Verify a magic link token and log the user in."""
     try:
         login_token = LoginToken.objects.get(token=token)
     except LoginToken.DoesNotExist:
@@ -669,7 +678,6 @@ def verify_magic_link(request, token):
             'error': 'This login link has expired. Please request a new one.'
         })
 
-    # Mark token as used and log in
     login_token.used = True
     login_token.save()
 
