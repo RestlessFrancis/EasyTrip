@@ -12,12 +12,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-79p58w0l&uqp&u9^te_n3zxnick#r^%7=_qo-ic8l-e++io@#d'
 
-# Groq API Key
+# Groq Key
 load_dotenv()
-GROQ_API_KEY = os.getenv('GROQ_API_KEY')
+GROQ_API_KEY = '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'
 
 # Mapbox Token
-MAPBOX_TOKEN = 'your-mapbox-token-here'
+MAPBOX_TOKEN = 'pk.eyJ1IjoiZnJhbnpxdCIsImEiOiJjbW1zamphcmgxa3g4MnNwbHduMGZwN2pyIn0.aBu83zj0am8gFkmDu_AtcA'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -116,5 +116,5 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'frncs4class@gmail.com'       # replace with your Gmail
-EMAIL_HOST_PASSWORD = 'email-app-password'  # replace with Gmail App Password
+EMAIL_HOST_PASSWORD = 'esjykyispoyqbwpg'  # replace with Gmail App Password
 DEFAULT_FROM_EMAIL = 'Easytrip ✈️ <frncs4class@gmail.com>'

@@ -472,7 +472,77 @@ Return ONLY a valid JSON array (no markdown, no explanation) with exactly {trip.
         return JsonResponse({'error': str(e)}, status=500)
 
 
+def monitor_dashboard(request):
+    """Staff-only monitoring dashboard."""
+    if not request.user.is_authenticated or not request.user.is_staff:
+        return redirect('login')
+
+    # ---- Stats ----
+    total_users = User.objects.count()
+    total_trips = Trip.objects.count()
+    today = timezone.now().date()
+    trips_today = Trip.objects.filter(created_at__date=today).count()
+    trips_this_week = Trip.objects.filter(
+        created_at__date__gte=today - datetime.timedelta(days=7)
+    ).count()
+
+    # ---- User list with trip counts ----
+    from django.db.models import Count, Max
+    users = User.objects.annotate(
+        trip_count=Count('trip'),
+        last_trip=Max('trip__created_at')
+    ).order_by('-date_joined')
+
+    # ---- Trip list ----
+    search_q = request.GET.get('q', '').strip()
+    trips = Trip.objects.select_related('user').order_by('-created_at')
+    if search_q:
+        trips = trips.filter(destination__icontains=search_q) | \
+                Trip.objects.filter(user__username__icontains=search_q).order_by('-created_at')
+
+    # ---- Most popular destinations ----
+    from django.db.models import Count as DCount
+    popular_destinations = (
+        Trip.objects.values('destination')
+        .annotate(count=DCount('destination'))
+        .order_by('-count')[:10]
+    )
+
+    context = {
+        'total_users': total_users,
+        'total_trips': total_trips,
+        'trips_today': trips_today,
+        'trips_this_week': trips_this_week,
+        'users': users,
+        'trips': trips[:50],  # latest 50
+        'popular_destinations': popular_destinations,
+        'search_q': search_q,
+    }
+    return render(request, 'monitor.html', context)
+
+
+def monitor_user_detail(request, user_id):
+    """Staff-only: view a specific user's trips."""
+    if not request.user.is_authenticated or not request.user.is_staff:
+        return redirect('login')
+
+    profile_user = get_object_or_404(User, id=user_id)
+    trips = Trip.objects.filter(user=profile_user).order_by('-created_at')
+
+    context = {
+        'profile_user': profile_user,
+        'trips': trips,
+        'trip_count': trips.count(),
+    }
+    return render(request, 'monitor_user.html', context)
+
+
 def dashboard(request):
+    if request.user.is_authenticated:
+        trips = Trip.objects.filter(user=request.user).order_by('-created_at')
+    else:
+        trips = Trip.objects.none()
+    return render(request, 'dashboard.html', {'trips': trips})
     if request.user.is_authenticated:
         trips = Trip.objects.filter(user=request.user).order_by('-created_at')
     else:
@@ -490,20 +560,133 @@ def delete_trip(request, trip_id):
 def login_view(request):
     if request.user.is_authenticated:
         return redirect('home')
+
     if request.method == 'POST':
-        username = request.POST.get('username', '')
+        username = request.POST.get('username', '').strip()
         password = request.POST.get('password', '')
-        user = authenticate(request, username=username, password=password)
-        if user is not None:
-            login(request, user)
-            next_url = request.GET.get('next', 'home')
-            return redirect(next_url)
-        else:
+
+        # Check if account is locked
+        lock_key = f'login_lock_{username}'
+        attempt_key = f'login_attempts_{username}'
+        locked_until = cache.get(lock_key)
+
+        if locked_until:
+            remaining = int((locked_until - timezone.now()).total_seconds())
             return render(request, 'login.html', {
-                'error': 'Invalid username or password. Please try again.',
+                'error': f'Too many failed attempts.',
+                'locked': True,
+                'remaining': max(remaining, 0),
                 'username': username,
             })
+
+        user = authenticate(request, username=username, password=password)
+
+        if user is not None:
+            # Successful login — clear attempts
+            cache.delete(attempt_key)
+            cache.delete(lock_key)
+            login(request, user)
+            return redirect(request.GET.get('next', 'home'))
+        else:
+            # Failed attempt — increment counter
+            attempts = cache.get(attempt_key, 0) + 1
+            cache.set(attempt_key, attempts, LOCKOUT_SECONDS * 2)
+
+            remaining_attempts = MAX_ATTEMPTS - attempts
+
+            if attempts >= MAX_ATTEMPTS:
+                # Lock the account
+                locked_until = timezone.now() + datetime.timedelta(seconds=LOCKOUT_SECONDS)
+                cache.set(lock_key, locked_until, LOCKOUT_SECONDS)
+                cache.delete(attempt_key)
+                return render(request, 'login.html', {
+                    'error': 'Too many failed attempts.',
+                    'locked': True,
+                    'remaining': LOCKOUT_SECONDS,
+                    'username': username,
+                })
+
+            return render(request, 'login.html', {
+                'error': f'Invalid username or password. {remaining_attempts} attempt{"s" if remaining_attempts != 1 else ""} remaining.',
+                'attempts_left': remaining_attempts,
+                'username': username,
+            })
+
     return render(request, 'login.html')
+
+
+def send_magic_link(request):
+    """Send a one-time magic login link to the user's email."""
+    if request.method != 'POST':
+        return redirect('login')
+
+    username = request.POST.get('username', '').strip()
+
+    # Try to find user by username or email
+    user = None
+    try:
+        user = User.objects.get(username=username)
+    except User.DoesNotExist:
+        try:
+            user = User.objects.get(email=username)
+        except User.DoesNotExist:
+            pass
+
+    # Always show success message to prevent user enumeration
+    if user and user.email:
+        # Invalidate old tokens for this user
+        LoginToken.objects.filter(user=user, used=False).update(used=True)
+
+        # Create new token
+        token = LoginToken.objects.create(user=user)
+        magic_url = f"{settings.SITE_URL}/magic-link/verify/{token.token}/"
+
+        try:
+            html_message = render_to_string('emails/magic_link.html', {
+                'user': user,
+                'magic_url': magic_url,
+                'site_url': settings.SITE_URL,
+            })
+            send_mail(
+                subject='🔐 Your Easytrip login link',
+                message=f'Click here to log in: {magic_url}',
+                from_email=settings.DEFAULT_FROM_EMAIL,
+                recipient_list=[user.email],
+                html_message=html_message,
+                fail_silently=True,
+            )
+        except Exception as e:
+            print(f"[MAGIC LINK ERROR] {e}")
+
+    return render(request, 'login.html', {
+        'magic_sent': True,
+        'username': username,
+    })
+
+
+def verify_magic_link(request, token):
+    """Verify a magic link token and log the user in."""
+    try:
+        login_token = LoginToken.objects.get(token=token)
+    except LoginToken.DoesNotExist:
+        return render(request, 'login.html', {
+            'error': 'This login link is invalid or has already been used.'
+        })
+
+    if not login_token.is_valid():
+        return render(request, 'login.html', {
+            'error': 'This login link has expired. Please request a new one.'
+        })
+
+    # Mark token as used and log in
+    login_token.used = True
+    login_token.save()
+
+    user = login_token.user
+    user.backend = 'django.contrib.auth.backends.ModelBackend'
+    login(request, user)
+
+    return redirect('home')
 
 
 def logout_view(request):
