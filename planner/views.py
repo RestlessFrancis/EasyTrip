@@ -755,8 +755,8 @@ def signup_view(request):
             })
         try:
             user = User.objects.create_user(username=username, email=email, password=password)
-            login(request, user)
-            return redirect('home')
+            # Redirect to login page instead of auto-logging in
+            return redirect('login')
         except IntegrityError:
             return render(request, 'signup.html', {
                 'error': 'Username is already taken. Please choose another.',
