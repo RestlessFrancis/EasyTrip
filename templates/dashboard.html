@@ -109,14 +109,17 @@
             <button onclick="closeModal()" class="btn btn-outline" style="flex:1;padding:12px;border:1.5px solid var(--border);border-radius:12px;font-size:0.95rem;">
                 Cancel
             </button>
-            <a id="modal-delete-btn" href="#" class="btn" style="flex:1;padding:12px;background:linear-gradient(135deg,#dc2626,#b91c1c);color:white;border-radius:12px;font-size:0.95rem;text-align:center;text-decoration:none;display:flex;align-items:center;justify-content:center;gap:6px;">
+            <button onclick="executeDelete()" class="btn" style="flex:1;padding:12px;background:linear-gradient(135deg,#dc2626,#b91c1c);color:white;border-radius:12px;font-size:0.95rem;display:flex;align-items:center;justify-content:center;gap:6px;border:none;cursor:pointer;">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <polyline points="3 6 5 6 21 6"></polyline>
                     <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
                 </svg>
                 Delete Trip
-            </a>
+            </button>
         </div>
+
+        <!-- Hidden form for delete -->
+        <form id="delete-form" method="GET" action="#" style="display:none;"></form>
     </div>
 </div>
 
@@ -137,16 +140,21 @@
     function confirmDelete(url, tripName) {
         deleteUrl = url;
         document.getElementById('modal-trip-name').textContent = '"' + tripName + '"';
-        document.getElementById('modal-delete-btn').href = url;
+        document.getElementById('delete-form').action = url;
 
         const modal = document.getElementById('delete-modal');
         modal.classList.add('active');
-        // Trigger animation on next frame
         requestAnimationFrame(() => {
             requestAnimationFrame(() => {
                 modal.classList.add('animate-in');
             });
         });
+    }
+
+    function executeDelete() {
+        if (deleteUrl) {
+            window.location.href = deleteUrl;
+        }
     }
 
     function closeModal() {
@@ -155,7 +163,6 @@
         setTimeout(() => modal.classList.remove('active'), 300);
     }
 
-    // Close on Escape key
     document.addEventListener('keydown', e => {
         if (e.key === 'Escape') closeModal();
     });
