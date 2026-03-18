@@ -151,7 +151,16 @@
         // Cancel
         function closeModal() {
             modal.classList.remove('animate-in');
-            setTimeout(function () { modal.classList.remove('active'); }, 300);
+            setTimeout(function () {
+                modal.classList.remove('active');
+                // Force hide modal and reset inline styles
+                modal.style.display = 'none';
+                modal.style.position = '';
+                modal.style.inset = '';
+                modal.style.zIndex = '';
+                modal.style.alignItems = '';
+                modal.style.justifyContent = '';
+            }, 300);
         }
         cancelBtn.addEventListener('click', closeModal);
         backdrop.addEventListener('click', closeModal);
