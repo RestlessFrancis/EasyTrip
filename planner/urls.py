@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import path, include
 from . import views
 
 urlpatterns = [
@@ -15,4 +15,5 @@ urlpatterns = [
     path('magic-link/verify/<uuid:token>/', views.verify_magic_link, name='verify_magic_link'),
     path('monitor/', views.monitor_dashboard, name='monitor_dashboard'),
     path('monitor/user/<int:user_id>/', views.monitor_user_detail, name='monitor_user_detail'),
+    
 ]

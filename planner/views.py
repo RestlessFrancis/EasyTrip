@@ -210,7 +210,13 @@ def home(request):
     if request.method == 'POST':
         destination = request.POST.get('destination')
         trip_length = request.POST.get('trip_length', 3)
-        group_size = request.POST.get('group_size', '')
+        group_size = request.POST.get('group_size', '1').strip()
+        # Format group size nicely
+        try:
+            gs = int(group_size)
+            group_size = f"{gs} {'person' if gs == 1 else 'people'}"
+        except (ValueError, TypeError):
+            group_size = group_size or '1 person'
         start_date = request.POST.get('start_date')
         end_date = request.POST.get('end_date')
         interests = request.POST.getlist('interests')
@@ -511,7 +517,7 @@ Return ONLY a valid JSON array (no markdown, no explanation) with exactly {trip.
         completion = client.chat.completions.create(
             model="llama-3.3-70b-versatile",
             messages=[{"role": "user", "content": prompt}],
-            max_tokens=6000,
+            max_tokens=8000,
             temperature=0.7,
         )
         raw_text = completion.choices[0].message.content.strip()
@@ -522,7 +528,19 @@ Return ONLY a valid JSON array (no markdown, no explanation) with exactly {trip.
                 raw_text = raw_text[4:]
         raw_text = raw_text.strip()
 
-        days_data = json.loads(raw_text)
+        # Fix truncated JSON by closing any open brackets
+        try:
+            days_data = json.loads(raw_text)
+        except json.JSONDecodeError:
+            # Try to salvage truncated response by closing open brackets
+            open_braces = raw_text.count('{') - raw_text.count('}')
+            open_brackets = raw_text.count('[') - raw_text.count(']')
+            raw_text = raw_text.rstrip(',').rstrip()
+            raw_text += '}' * open_braces + ']' * open_brackets
+            try:
+                days_data = json.loads(raw_text)
+            except json.JSONDecodeError as e:
+                return JsonResponse({'error': f'Failed to parse AI response: {str(e)}'}, status=500)
 
         trip.days.all().delete()
         for day in days_data:
