@@ -21,7 +21,7 @@ from groq import Groq
 # ---- Login attempt constants ----
 MAX_ATTEMPTS = 5
 LOCKOUT_SECONDS = 300  # 5 minutes
-
+    
 
 # ---- Email helper ----
 def send_email(subject, to_email, html_content):
