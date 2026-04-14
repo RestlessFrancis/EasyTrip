@@ -6,6 +6,9 @@ from pathlib import Path
 import os
 import dj_database_url
 
+
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -27,7 +30,7 @@ if RENDER_EXTERNAL_HOSTNAME:
     ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
 
 # API Keys
-GROQ_API_KEY ='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'
+GROQ_API_KEY =os.environ.get('GROQ_API_KEY', '')
 MAPBOX_TOKEN = os.environ.get('MAPBOX_TOKEN', '')
 SITE_URL = os.environ.get('SITE_URL', 'http://127.0.0.1:8000')
 
@@ -115,8 +118,8 @@ LOGIN_URL = '/login/'
 LOGIN_REDIRECT_URL = '/'
 
 # Email
-RESEND_API_KEY = os.environ.get('RESEND_API_KEY', '')
-EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', '')
+RESEND_API_KEY = 're_3fX8cCZo_KrmC4bBbZyjVrBpFMTrcny8Q'
+EMAIL_HOST_USER = 'onboarding@resend.dev'
 
 # Local Gmail SMTP fallback
 if not RESEND_API_KEY:
