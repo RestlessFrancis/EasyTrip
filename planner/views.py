@@ -17,6 +17,7 @@ from decimal import Decimal, InvalidOperation
 import requests
 import urllib.parse
 from groq import Groq
+from django.urls import reverse
 
 # ---- Login attempt constants ----
 MAX_ATTEMPTS = 5
@@ -698,15 +699,25 @@ def send_magic_link(request):
             pass
 
     if user and user.email:
+        # Invalidate old tokens
         LoginToken.objects.filter(user=user, used=False).update(used=True)
+        
+        # Create new token
         token = LoginToken.objects.create(user=user)
-        magic_url = f"{settings.SITE_URL}/magic-link/verify/{token.token}/"
+
+        # Build the URL safely
+        # reverse() finds the path: /magic-link/verify/<uuid>/
+        relative_url = reverse('verify_magic_link', kwargs={'token': token.token})
+        
+        # Ensure SITE_URL doesn't have a trailing slash to avoid // in the URL
+        base_url = settings.SITE_URL.rstrip('/')
+        magic_url = f"{base_url}{relative_url}"
 
         try:
             html_message = render_to_string('emails/magic_link.html', {
                 'user': user,
                 'magic_url': magic_url,
-                'site_url': settings.SITE_URL,
+                'site_url': base_url,
             })
             send_email(
                 subject='🔐 Your Easytrip login link',

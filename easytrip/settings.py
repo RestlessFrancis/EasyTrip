@@ -23,6 +23,8 @@ ALLOWED_HOSTS = [
     'localhost',
     '.onrender.com',
     'easytrip-66z0.onrender.com',
+    'easytrip.onrender.com',
+    
 ]
 
 RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
