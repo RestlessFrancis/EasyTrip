@@ -120,8 +120,8 @@ LOGIN_URL = '/login/'
 LOGIN_REDIRECT_URL = '/'
 
 # Email
-RESEND_API_KEY = 're_3fX8cCZo_KrmC4bBbZyjVrBpFMTrcny8Q'
-EMAIL_HOST_USER = 'onboarding@resend.dev'
+RESEND_API_KEY = os.environ.get('RESEND_API_KEY')
+EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')
 
 # Local Gmail SMTP fallback
 if not RESEND_API_KEY:
